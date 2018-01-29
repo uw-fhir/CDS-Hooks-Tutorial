@@ -47,7 +47,7 @@ In the input box, enter `https://XXXXX.serveo.net/cds-services`, using the SSH t
 
 ## Testing
 
-1. Navigate to the [Rx View](http://sandbox.cds-hooks.org/#{"hook":"medication-prescribe"}), and select any problem from the **Treating** dropdown box.
+1. Navigate to the Rx View (by clicking **Rx View** from the navbar at the top), and select any problem from the **Treating** dropdown box.
 
 2. Note the Public Health Alert card being shown.
 

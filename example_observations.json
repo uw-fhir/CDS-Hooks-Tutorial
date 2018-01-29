@@ -1,0 +1,73 @@
+{
+    "resourceType": "Bundle",
+    "id": "822451d0-e92e-414e-95ba-e6648457021f",
+    "meta": {
+        "lastUpdated": "2018-01-29T23:32:50.609+00:00"
+    },
+    "type": "searchset",
+    "total": 27,
+    "link": [
+        {
+            "relation": "self",
+            "url": "https://api.hspconsortium.org/cdshooksdstu2/open/Observation?code%3Atext=bmi&_sort%3Adesc=date&patient=SMART-1288992"
+        },
+        {
+            "relation": "next",
+            "url": "https://api.hspconsortium.org/cdshooksdstu2/open?_getpages=439d00c4-27a8-46f3-b63b-87a3693dd6fb&_getpagesoffset=1&_count=1&_pretty=true&_bundletype=searchset"
+        }
+    ],
+    "entry": [
+        {
+            "fullUrl": "https://api.hspconsortium.org/cdshooksdstu2/open/Observation/SMART-Observation-854-bmi",
+            "resource": {
+                "resourceType": "Observation",
+                "id": "SMART-Observation-854-bmi",
+                "meta": {
+                    "versionId": "1",
+                    "lastUpdated": "2016-07-06T12:48:01.000+00:00"
+                },
+                "text": {
+                    "status": "generated",
+                    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">2009-12-01: bmi = 34.4 kg/m2</div>"
+                },
+                "status": "final",
+                "category": {
+                    "coding": [
+                        {
+                            "system": "http://hl7.org/fhir/observation-category",
+                            "code": "vital-signs",
+                            "display": "Vital Signs"
+                        }
+                    ],
+                    "text": "Vital Signs"
+                },
+                "code": {
+                    "coding": [
+                        {
+                            "system": "http://loinc.org",
+                            "code": "39156-5",
+                            "display": "bmi"
+                        }
+                    ],
+                    "text": "bmi"
+                },
+                "subject": {
+                    "reference": "Patient/SMART-1288992"
+                },
+                "encounter": {
+                    "reference": "Encounter/SMART-Encounter-854"
+                },
+                "effectiveDateTime": "2009-12-01",
+                "valueQuantity": {
+                    "value": 34.4,
+                    "unit": "kg/m2",
+                    "system": "http://unitsofmeasure.org",
+                    "code": "kg/m2"
+                }
+            },
+            "search": {
+                "mode": "match"
+            }
+        }
+    ]
+}

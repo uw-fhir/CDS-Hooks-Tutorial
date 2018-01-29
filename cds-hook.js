@@ -1,6 +1,5 @@
 const express = require('express');
 const fetch = require('node-fetch');
-const loadJson = require('load-json-file');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
@@ -35,9 +34,6 @@ const publicHealthResponse = {
   ]
 };
 
-// Sample FHIR Return
-
-
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -49,20 +45,32 @@ app.get('/cds-services', (req, res) => res.send(services));
  * Actual CDS Hook logic here
  */
 app.post('/cds-services/phi533-prescribe', function (req, res) {
-  fetch('https://api.hspconsortium.org/cdshooksdstu2/open/Observation?patient=SMART-1288992&code:text=bmi&_sort=date')
-  // /Observation?subject=Patient/23
-    .then(res => res.json())
-    .then(json => console.log(json))
-    .catch(err => console.error(err))
+  console.log("CDS Request: \n" + JSON.stringify(req.body));
 
-  loadJson('./sample_bmi_result.json')
+  const hook = req.body.hook;
+  const fhirServer = req.body.fhirServer;
+  const patient = req.body.patient;
+  const reason = req.body.context.medications[0].reasonCodeableConcept.text
+  
+  console.log("Useful parameters:");
+  console.log("hook: " + hook);
+  console.log("fhirServer: " + fhirServer);
+  console.log("patient: " + patient);
+  console.log("reason: " + reason);
+
+  // Example request to get latest BMI Value
+  // TODO: Update to use server and patient from requests
+  fetch('https://api.hspconsortium.org/cdshooksdstu2/open/Observation?patient=SMART-1288992&code:text=bmi&_sort:desc=date&_count=1')
+    .then(res => res.json())
     .then(json => {
-      const bmi = json.entry[1].resource.valueQuantity;
+      const bmi = json.entry[0].resource.valueQuantity;
       
-      console.log("BMI: " + bmi.value + " " + bmi.unit);
+      console.log("BMI Value: " + bmi.value + " " + bmi.unit);
     })
-    .catch(err => console.log(err));
-  // FIXME: For now, always just return the same card(s)
+    .catch(err => console.error(err))
+    
+  // Returns static card
+  // TODO: Update to return Info and App cards if hook == 'medication-prescribe' 
   res.send(publicHealthResponse);
 });
 

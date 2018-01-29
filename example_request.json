@@ -1,0 +1,62 @@
+{
+    "hook": "medication-prescribe",
+    "hookInstance": "d3ccea84-d7d6-4f6f-97c4-126cc169c18b",
+    "fhirServer": "https://api.hspconsortium.org/cdshooksdstu2/open",
+    "redirect": "https://sandbox.cds-hooks.org/service-done.html",
+    "user": "Practitioner/example",
+    "patient": "SMART-1551992",
+    "context": {
+      "patientId": "SMART-1551992",
+      "medications": [
+        {
+          "resourceType": "MedicationOrder",
+          "dateWritten": "2018-01-29",
+          "status": "draft",
+          "patient": {
+            "reference": "Patient/SMART-1551992"
+          },
+          "dosageInstruction": [
+            {
+              "doseQuantity": {
+                "value": 1,
+                "system": "http://unitsofmeasure.org",
+                "code": "{pill}"
+              },
+              "timing": {
+                "repeat": {
+                  "frequency": 1,
+                  "period": 1,
+                  "periodUnits": "d",
+                  "boundsPeriod": {
+                    "start": "2018-01-29",
+                    "end": "2018-02-28"
+                  }
+                }
+              }
+            }
+          ],
+          "medicationCodeableConcept": {
+            "text": "Metoprolol Tartrate 50 MG Oral Tablet [Lopressor]",
+            "coding": [
+              {
+                "display": "Metoprolol Tartrate 50 MG Oral Tablet [Lopressor]",
+                "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                "code": "866516"
+              }
+            ]
+          },
+          "reasonCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "11934000",
+                "display": "Hypertensive disorder"
+              }
+            ],
+            "text": "Hypertensive disorder"
+          }
+        }
+      ]
+    },
+    "prefetch": {}
+  }

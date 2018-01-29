@@ -1,0 +1,33 @@
+{
+  "name": "phi533-cdshook",
+  "version": "1.0.0",
+  "description": " PHI 533 CDS Hook implementation",
+  "main": "cds-hook.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon cds-hook.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uwbhi/phi533-cdshook.git"
+  },
+  "keywords": [
+    "cds-hooks",
+    "express",
+    "javascript"
+  ],
+  "author": "UW BHI",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/uwbhi/phi533-cdshook/issues"
+  },
+  "homepage": "https://github.com/uwbhi/phi533-cdshook#readme",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "cors": "^2.8.4",
+    "express": "^4.16.2"
+  },
+  "devDependencies": {
+    "nodemon": "^1.14.11"
+  }
+}

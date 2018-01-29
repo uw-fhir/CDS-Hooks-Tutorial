@@ -1,0 +1,541 @@
+{
+    "resourceType": "Bundle",
+    "id": "a57bc6e1-c5a3-4538-b706-ad5d0e4e5763",
+    "meta": {
+        "lastUpdated": "2018-01-29T22:20:49.710+00:00"
+    },
+    "type": "searchset",
+    "total": 27,
+    "link": [
+        {
+            "relation": "self",
+            "url": "https://api.hspconsortium.org/cdshooksdstu2/open/Observation?code%3Atext=bmi&_sort=date&patient=SMART-1288992"
+        },
+        {
+            "relation": "next",
+            "url": "https://api.hspconsortium.org/cdshooksdstu2/open?_getpages=8d55c8e5-03d1-48a2-aaf1-9a6fe4075fc4&_getpagesoffset=10&_count=10&_pretty=true&_bundletype=searchset"
+        }
+    ],
+    "entry": [
+        {
+            "fullUrl": "https://api.hspconsortium.org/cdshooksdstu2/open/Observation/SMART-Observation-828-bmi",
+            "resource": {
+                "resourceType": "Observation",
+                "id": "SMART-Observation-828-bmi",
+                "meta": {
+                    "versionId": "1",
+                    "lastUpdated": "2016-07-06T12:48:01.000+00:00"
+                },
+                "text": {
+                    "status": "generated",
+                    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">1997-04-30: bmi = 35.8 kg/m2</div>"
+                },
+                "status": "final",
+                "category": {
+                    "coding": [
+                        {
+                            "system": "http://hl7.org/fhir/observation-category",
+                            "code": "vital-signs",
+                            "display": "Vital Signs"
+                        }
+                    ],
+                    "text": "Vital Signs"
+                },
+                "code": {
+                    "coding": [
+                        {
+                            "system": "http://loinc.org",
+                            "code": "39156-5",
+                            "display": "bmi"
+                        }
+                    ],
+                    "text": "bmi"
+                },
+                "subject": {
+                    "reference": "Patient/SMART-1288992"
+                },
+                "encounter": {
+                    "reference": "Encounter/SMART-Encounter-828"
+                },
+                "effectiveDateTime": "1997-04-30",
+                "valueQuantity": {
+                    "value": 35.8,
+                    "unit": "kg/m2",
+                    "system": "http://unitsofmeasure.org",
+                    "code": "kg/m2"
+                }
+            },
+            "search": {
+                "mode": "match"
+            }
+        },
+        {
+            "fullUrl": "https://api.hspconsortium.org/cdshooksdstu2/open/Observation/SMART-Observation-829-bmi",
+            "resource": {
+                "resourceType": "Observation",
+                "id": "SMART-Observation-829-bmi",
+                "meta": {
+                    "versionId": "1",
+                    "lastUpdated": "2016-07-06T12:48:01.000+00:00"
+                },
+                "text": {
+                    "status": "generated",
+                    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">1997-05-01: bmi = 36.6 kg/m2</div>"
+                },
+                "status": "final",
+                "category": {
+                    "coding": [
+                        {
+                            "system": "http://hl7.org/fhir/observation-category",
+                            "code": "vital-signs",
+                            "display": "Vital Signs"
+                        }
+                    ],
+                    "text": "Vital Signs"
+                },
+                "code": {
+                    "coding": [
+                        {
+                            "system": "http://loinc.org",
+                            "code": "39156-5",
+                            "display": "bmi"
+                        }
+                    ],
+                    "text": "bmi"
+                },
+                "subject": {
+                    "reference": "Patient/SMART-1288992"
+                },
+                "encounter": {
+                    "reference": "Encounter/SMART-Encounter-829"
+                },
+                "effectiveDateTime": "1997-05-01",
+                "valueQuantity": {
+                    "value": 36.6,
+                    "unit": "kg/m2",
+                    "system": "http://unitsofmeasure.org",
+                    "code": "kg/m2"
+                }
+            },
+            "search": {
+                "mode": "match"
+            }
+        },
+        {
+            "fullUrl": "https://api.hspconsortium.org/cdshooksdstu2/open/Observation/SMART-Observation-830-bmi",
+            "resource": {
+                "resourceType": "Observation",
+                "id": "SMART-Observation-830-bmi",
+                "meta": {
+                    "versionId": "1",
+                    "lastUpdated": "2016-07-06T12:48:01.000+00:00"
+                },
+                "text": {
+                    "status": "generated",
+                    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">1997-05-07: bmi = 36.4 kg/m2</div>"
+                },
+                "status": "final",
+                "category": {
+                    "coding": [
+                        {
+                            "system": "http://hl7.org/fhir/observation-category",
+                            "code": "vital-signs",
+                            "display": "Vital Signs"
+                        }
+                    ],
+                    "text": "Vital Signs"
+                },
+                "code": {
+                    "coding": [
+                        {
+                            "system": "http://loinc.org",
+                            "code": "39156-5",
+                            "display": "bmi"
+                        }
+                    ],
+                    "text": "bmi"
+                },
+                "subject": {
+                    "reference": "Patient/SMART-1288992"
+                },
+                "encounter": {
+                    "reference": "Encounter/SMART-Encounter-830"
+                },
+                "effectiveDateTime": "1997-05-07",
+                "valueQuantity": {
+                    "value": 36.4,
+                    "unit": "kg/m2",
+                    "system": "http://unitsofmeasure.org",
+                    "code": "kg/m2"
+                }
+            },
+            "search": {
+                "mode": "match"
+            }
+        },
+        {
+            "fullUrl": "https://api.hspconsortium.org/cdshooksdstu2/open/Observation/SMART-Observation-831-bmi",
+            "resource": {
+                "resourceType": "Observation",
+                "id": "SMART-Observation-831-bmi",
+                "meta": {
+                    "versionId": "1",
+                    "lastUpdated": "2016-07-06T12:48:01.000+00:00"
+                },
+                "text": {
+                    "status": "generated",
+                    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">1999-12-20: bmi = 35.4 kg/m2</div>"
+                },
+                "status": "final",
+                "category": {
+                    "coding": [
+                        {
+                            "system": "http://hl7.org/fhir/observation-category",
+                            "code": "vital-signs",
+                            "display": "Vital Signs"
+                        }
+                    ],
+                    "text": "Vital Signs"
+                },
+                "code": {
+                    "coding": [
+                        {
+                            "system": "http://loinc.org",
+                            "code": "39156-5",
+                            "display": "bmi"
+                        }
+                    ],
+                    "text": "bmi"
+                },
+                "subject": {
+                    "reference": "Patient/SMART-1288992"
+                },
+                "encounter": {
+                    "reference": "Encounter/SMART-Encounter-831"
+                },
+                "effectiveDateTime": "1999-12-20",
+                "valueQuantity": {
+                    "value": 35.4,
+                    "unit": "kg/m2",
+                    "system": "http://unitsofmeasure.org",
+                    "code": "kg/m2"
+                }
+            },
+            "search": {
+                "mode": "match"
+            }
+        },
+        {
+            "fullUrl": "https://api.hspconsortium.org/cdshooksdstu2/open/Observation/SMART-Observation-832-bmi",
+            "resource": {
+                "resourceType": "Observation",
+                "id": "SMART-Observation-832-bmi",
+                "meta": {
+                    "versionId": "1",
+                    "lastUpdated": "2016-07-06T12:48:01.000+00:00"
+                },
+                "text": {
+                    "status": "generated",
+                    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">1999-12-21: bmi = 35.2 kg/m2</div>"
+                },
+                "status": "final",
+                "category": {
+                    "coding": [
+                        {
+                            "system": "http://hl7.org/fhir/observation-category",
+                            "code": "vital-signs",
+                            "display": "Vital Signs"
+                        }
+                    ],
+                    "text": "Vital Signs"
+                },
+                "code": {
+                    "coding": [
+                        {
+                            "system": "http://loinc.org",
+                            "code": "39156-5",
+                            "display": "bmi"
+                        }
+                    ],
+                    "text": "bmi"
+                },
+                "subject": {
+                    "reference": "Patient/SMART-1288992"
+                },
+                "encounter": {
+                    "reference": "Encounter/SMART-Encounter-832"
+                },
+                "effectiveDateTime": "1999-12-21",
+                "valueQuantity": {
+                    "value": 35.2,
+                    "unit": "kg/m2",
+                    "system": "http://unitsofmeasure.org",
+                    "code": "kg/m2"
+                }
+            },
+            "search": {
+                "mode": "match"
+            }
+        },
+        {
+            "fullUrl": "https://api.hspconsortium.org/cdshooksdstu2/open/Observation/SMART-Observation-833-bmi",
+            "resource": {
+                "resourceType": "Observation",
+                "id": "SMART-Observation-833-bmi",
+                "meta": {
+                    "versionId": "1",
+                    "lastUpdated": "2016-07-06T12:48:01.000+00:00"
+                },
+                "text": {
+                    "status": "generated",
+                    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">2001-01-19: bmi = 34.6 kg/m2</div>"
+                },
+                "status": "final",
+                "category": {
+                    "coding": [
+                        {
+                            "system": "http://hl7.org/fhir/observation-category",
+                            "code": "vital-signs",
+                            "display": "Vital Signs"
+                        }
+                    ],
+                    "text": "Vital Signs"
+                },
+                "code": {
+                    "coding": [
+                        {
+                            "system": "http://loinc.org",
+                            "code": "39156-5",
+                            "display": "bmi"
+                        }
+                    ],
+                    "text": "bmi"
+                },
+                "subject": {
+                    "reference": "Patient/SMART-1288992"
+                },
+                "encounter": {
+                    "reference": "Encounter/SMART-Encounter-833"
+                },
+                "effectiveDateTime": "2001-01-19",
+                "valueQuantity": {
+                    "value": 34.6,
+                    "unit": "kg/m2",
+                    "system": "http://unitsofmeasure.org",
+                    "code": "kg/m2"
+                }
+            },
+            "search": {
+                "mode": "match"
+            }
+        },
+        {
+            "fullUrl": "https://api.hspconsortium.org/cdshooksdstu2/open/Observation/SMART-Observation-834-bmi",
+            "resource": {
+                "resourceType": "Observation",
+                "id": "SMART-Observation-834-bmi",
+                "meta": {
+                    "versionId": "1",
+                    "lastUpdated": "2016-07-06T12:48:01.000+00:00"
+                },
+                "text": {
+                    "status": "generated",
+                    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">2001-01-24: bmi = 33.4 kg/m2</div>"
+                },
+                "status": "final",
+                "category": {
+                    "coding": [
+                        {
+                            "system": "http://hl7.org/fhir/observation-category",
+                            "code": "vital-signs",
+                            "display": "Vital Signs"
+                        }
+                    ],
+                    "text": "Vital Signs"
+                },
+                "code": {
+                    "coding": [
+                        {
+                            "system": "http://loinc.org",
+                            "code": "39156-5",
+                            "display": "bmi"
+                        }
+                    ],
+                    "text": "bmi"
+                },
+                "subject": {
+                    "reference": "Patient/SMART-1288992"
+                },
+                "encounter": {
+                    "reference": "Encounter/SMART-Encounter-834"
+                },
+                "effectiveDateTime": "2001-01-24",
+                "valueQuantity": {
+                    "value": 33.4,
+                    "unit": "kg/m2",
+                    "system": "http://unitsofmeasure.org",
+                    "code": "kg/m2"
+                }
+            },
+            "search": {
+                "mode": "match"
+            }
+        },
+        {
+            "fullUrl": "https://api.hspconsortium.org/cdshooksdstu2/open/Observation/SMART-Observation-835-bmi",
+            "resource": {
+                "resourceType": "Observation",
+                "id": "SMART-Observation-835-bmi",
+                "meta": {
+                    "versionId": "1",
+                    "lastUpdated": "2016-07-06T12:48:01.000+00:00"
+                },
+                "text": {
+                    "status": "generated",
+                    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">2001-01-25: bmi = 34.3 kg/m2</div>"
+                },
+                "status": "final",
+                "category": {
+                    "coding": [
+                        {
+                            "system": "http://hl7.org/fhir/observation-category",
+                            "code": "vital-signs",
+                            "display": "Vital Signs"
+                        }
+                    ],
+                    "text": "Vital Signs"
+                },
+                "code": {
+                    "coding": [
+                        {
+                            "system": "http://loinc.org",
+                            "code": "39156-5",
+                            "display": "bmi"
+                        }
+                    ],
+                    "text": "bmi"
+                },
+                "subject": {
+                    "reference": "Patient/SMART-1288992"
+                },
+                "encounter": {
+                    "reference": "Encounter/SMART-Encounter-835"
+                },
+                "effectiveDateTime": "2001-01-25",
+                "valueQuantity": {
+                    "value": 34.3,
+                    "unit": "kg/m2",
+                    "system": "http://unitsofmeasure.org",
+                    "code": "kg/m2"
+                }
+            },
+            "search": {
+                "mode": "match"
+            }
+        },
+        {
+            "fullUrl": "https://api.hspconsortium.org/cdshooksdstu2/open/Observation/SMART-Observation-836-bmi",
+            "resource": {
+                "resourceType": "Observation",
+                "id": "SMART-Observation-836-bmi",
+                "meta": {
+                    "versionId": "1",
+                    "lastUpdated": "2016-07-06T12:48:01.000+00:00"
+                },
+                "text": {
+                    "status": "generated",
+                    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">2001-10-31: bmi = 33.9 kg/m2</div>"
+                },
+                "status": "final",
+                "category": {
+                    "coding": [
+                        {
+                            "system": "http://hl7.org/fhir/observation-category",
+                            "code": "vital-signs",
+                            "display": "Vital Signs"
+                        }
+                    ],
+                    "text": "Vital Signs"
+                },
+                "code": {
+                    "coding": [
+                        {
+                            "system": "http://loinc.org",
+                            "code": "39156-5",
+                            "display": "bmi"
+                        }
+                    ],
+                    "text": "bmi"
+                },
+                "subject": {
+                    "reference": "Patient/SMART-1288992"
+                },
+                "encounter": {
+                    "reference": "Encounter/SMART-Encounter-836"
+                },
+                "effectiveDateTime": "2001-10-31",
+                "valueQuantity": {
+                    "value": 33.9,
+                    "unit": "kg/m2",
+                    "system": "http://unitsofmeasure.org",
+                    "code": "kg/m2"
+                }
+            },
+            "search": {
+                "mode": "match"
+            }
+        },
+        {
+            "fullUrl": "https://api.hspconsortium.org/cdshooksdstu2/open/Observation/SMART-Observation-837-bmi",
+            "resource": {
+                "resourceType": "Observation",
+                "id": "SMART-Observation-837-bmi",
+                "meta": {
+                    "versionId": "1",
+                    "lastUpdated": "2016-07-06T12:48:01.000+00:00"
+                },
+                "text": {
+                    "status": "generated",
+                    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">2001-11-01: bmi = 36.3 kg/m2</div>"
+                },
+                "status": "final",
+                "category": {
+                    "coding": [
+                        {
+                            "system": "http://hl7.org/fhir/observation-category",
+                            "code": "vital-signs",
+                            "display": "Vital Signs"
+                        }
+                    ],
+                    "text": "Vital Signs"
+                },
+                "code": {
+                    "coding": [
+                        {
+                            "system": "http://loinc.org",
+                            "code": "39156-5",
+                            "display": "bmi"
+                        }
+                    ],
+                    "text": "bmi"
+                },
+                "subject": {
+                    "reference": "Patient/SMART-1288992"
+                },
+                "encounter": {
+                    "reference": "Encounter/SMART-Encounter-837"
+                },
+                "effectiveDateTime": "2001-11-01",
+                "valueQuantity": {
+                    "value": 36.3,
+                    "unit": "kg/m2",
+                    "system": "http://unitsofmeasure.org",
+                    "code": "kg/m2"
+                }
+            },
+            "search": {
+                "mode": "match"
+            }
+        }
+    ]
+}

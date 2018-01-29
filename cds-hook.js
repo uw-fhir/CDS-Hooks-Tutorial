@@ -1,8 +1,13 @@
 const express = require('express');
+const fetch = require('node-fetch');
+const loadJson = require('load-json-file');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
 
+console.log(process.cwd());
+
+// Services
 const services = {
   "services": [
     {
@@ -15,6 +20,7 @@ const services = {
   ]
 };
 
+// Cards
 const publicHealthResponse = {
   "cards": [
     { 
@@ -29,6 +35,9 @@ const publicHealthResponse = {
   ]
 };
 
+// Sample FHIR Return
+
+
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -40,6 +49,19 @@ app.get('/cds-services', (req, res) => res.send(services));
  * Actual CDS Hook logic here
  */
 app.post('/cds-services/phi533-prescribe', function (req, res) {
+  fetch('https://api.hspconsortium.org/cdshooksdstu2/open/Observation?patient=SMART-1288992&code:text=bmi&_sort=date')
+  // /Observation?subject=Patient/23
+    .then(res => res.json())
+    .then(json => console.log(json))
+    .catch(err => console.error(err))
+
+  loadJson('./sample_bmi_result.json')
+    .then(json => {
+      const bmi = json.entry[1].resource.valueQuantity;
+      
+      console.log("BMI: " + bmi.value + " " + bmi.unit);
+    })
+    .catch(err => console.log(err));
   // FIXME: For now, always just return the same card(s)
   res.send(publicHealthResponse);
 });

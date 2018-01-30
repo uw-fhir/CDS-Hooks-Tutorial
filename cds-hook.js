@@ -62,9 +62,10 @@ const publicHealthResponse = (recoms) => {
 
 const FHIR_SERVER_PREFIX = 'https://api.hspconsortium.org/cdshooksdstu2/open';
 const BMI_SERVER_PREFIX = 'https://bmi.p.mashape.com/';
+const X_MASHAPE_KEY = "wwINWStb1qmshrr5MLefJD0RHglLp1IH4ITjsn0zitOozBqxnk";
 
-const buildObsURL = (patientId, text) => `${FHIR_SERVER_PREFIX}/Observation?patient=${patientId}&code:text=${text}&_sort:desc=date&_count=1`;
-const buildPatientURL = (patientId) => `${FHIR_SERVER_PREFIX}/Patient/${patientId}`;
+const buildObsURL = (patientId, text, fhir_server) => `${fhir_server}/Observation?patient=${patientId}&code:text=${text}&_sort:desc=date&_count=1`;
+const buildPatientURL = (patientId, fhir_server) => `${fhir_server}/Patient/${patientId}`;
 
 const getAsync = async (url) => await (await fetch(url)).json();
 
@@ -74,7 +75,7 @@ const bmiPostAsync = async (payload) => {
       body: JSON.stringify(payload),
       headers: {
         'Content-Type': 'application/json',
-        'X-Mashape-Key': 'wwINWStb1qmshrr5MLefJD0RHglLp1IH4ITjsn0zitOozBqxnk',
+        'X-Mashape-Key': X_MASHAPE_KEY,
         'Accept': 'application/json'
       }
     })).json();
@@ -97,10 +98,11 @@ app.get('/cds-services', asyncHandler(async (req, res, next) => {
 app.post('/cds-services/phi533-prescribe', asyncHandler(async (req, res, next) => {
   console.log("CDS Request: \n" + JSON.stringify(req.body, null, ' '));
 
-  const hook = req.body.hook;
-  const fhirServer = req.body.fhirServer;
-  const patient = req.body.patient;
-  const reason = req.body.context.medications[0].reasonCodeableConcept.text
+  // Extracts useful information from the data sent from the Sandbox
+  const hook = req.body.hook; // Type of hook
+  const fhirServer = req.body.fhirServer; // URL for FHIR Server endpoint
+  const patient = req.body.patient; // Patient Identifier
+  const reason = req.body.context.medications[0].reasonCodeableConcept.text // Chosen Problem to Treat
 
   console.log("Useful parameters:");
   console.log("hook: " + hook);
@@ -108,15 +110,17 @@ app.post('/cds-services/phi533-prescribe', asyncHandler(async (req, res, next) =
   console.log("patient: " + patient);
   console.log("reason: " + reason);
 
-  const patientReq = await getAsync(buildPatientURL('SMART-1551992'));
-  const weightReq = await getAsync(buildObsURL('SMART-1551992', 'weight'));
-  const heightReq = await getAsync(buildObsURL('SMART-1551992', 'height'));
+  // Gets patient gender and age
+  const patientReq = await getAsync(buildPatientURL(patient, fhirServer));
+  // Gets patient weight and height
+  const weightReq = await getAsync(buildObsURL(patient, 'weight', fhirServer));
+  const heightReq = await getAsync(buildObsURL(patient, 'height', fhirServer));
 
+  // Parses returned data into useful variables
   const gender = patientReq.gender;
   const birthDate = patientReq.birthDate;
-  const weight = weightReq.entry[0].resource.valueQuantity.value;
-  const height = heightReq.entry[0].resource.valueQuantity.value;
-
+  const weight = weightReq.entry[0].resource.valueQuantity;
+  const height = heightReq.entry[0].resource.valueQuantity;
   const age = moment().diff(birthDate, 'years');
 
   console.log('Age: ', age);
@@ -125,15 +129,15 @@ app.post('/cds-services/phi533-prescribe', asyncHandler(async (req, res, next) =
   console.log('Height: ', height);
 
   const bmiData = await bmiPostAsync({
-    age: 24,
-    sex: 'f',
+    age: age,
+    sex: (gender == 'female' ? 'f' : 'm'),
     weight: {
-      value: "85.00",
-      unit: "kg"
+      value: weight.value,
+      unit: weight.unit
     },
     height: {
-      value: "170.00",
-      unit: "cm"
+      value: height.value,
+      unit: height.unit
     }
   });
 

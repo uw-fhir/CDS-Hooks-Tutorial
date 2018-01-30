@@ -19,6 +19,9 @@ We learned about the standards (FHIR, SMART on FHIR, CDS Hooks) and tought about
 
     c. **Git**: (optional) We'll use it to download the server code. If you don't want to install it, you can download the code in a .zip file.
 
+3. To make this tutorial more fun, we're hooking up recomendations from an existant BMI Service - an BMI Calculator API that can be found here: https://market.mashape.com/navii/bmi-calculator
+
+We funded the $1 fee to enable this api for a month for this class. If you're doing this tutorial and this API is not working, you might have to sign up yourself and change the `X_MASHAPE_KEY` constant in the `cds-hooks.js` file to your own key.
 
 ## The Scenario
 You’re working on a nation-wide project whose goal is to study and combat obesity in the United States. Your job involves designing a CDS Hook that supports the study objectives. The hook should allow you to:
@@ -29,7 +32,7 @@ You’re working on a nation-wide project whose goal is to study and combat obes
 
 In this specific scenario, patient **Lisa P. Coleman** is visiting her physician. The physician diagnoses her with **Hypertensive disorder**, and is prescribing **Lopressor** to treat her high blood pressure. 
 
-## Exercise 1 - Acting out the scenario in CDS Sandbox
+## Exercise 1 - Acting out the scenario in the CDS Sandbox
 1. Go to https://sandbox.cds-hooks.org
 2. Click on `Change Patient` on the top menu
 3. Select `Lisa P. Coleman`
@@ -104,26 +107,130 @@ Now that we have a **CDS Service** that's available on the web, we need to tell 
 
 4. Click the `Save` button. After a small pause, you should get the following message: `Success: Configured CDS Service(s) found at the discovery endpoint.`
 
-And Voila! The **CDS Hooks Sandbox** is communicating with your **CDS Service** and getting a nice **Card**. 
+5. Go through **Exercise 1** again. Make sure that instead of the `Price Check` card, you're recieving a card titled `BMI Information and Recommendations`. 
+
+And Voila! The **CDS Hooks Sandbox** is communicating with your **CDS Service** and getting a nice **Card**!
+
+## Overview of Current CDS Service App
+
+(put in what app actually does, and how it links to code)
 
 ## Exercise 4 - Modify BMI Calculator Request to use Patient-specific data.
 Right now, the recommendations sent back to the **Sandbox** never change, because we're using static data
-to send to the **BMI Calculator API** see [this line](https://github.com/uwbhi/phi533-cdshook/blob/d7da4e9e40a52d476e1111bea1e82227c7c1ae85/cds-hook.js#L104). Let's fix this, and send information about the patient that we're actually treating!
+to send to the **BMI Calculator API**. See [this line](https://github.com/uwbhi/phi533-cdshook/blob/d7da4e9e40a52d476e1111bea1e82227c7c1ae85/cds-hook.js#L104). 
 
+You can check this by switching **Patients** in the **Sandbox** and noticing the the BMI recommendations never change. 
 
-### Get Patient Age and Sex
+Let's fix this, and send information about the patient that we're actually treating!
 
-### Get Patient Height and Weight
+To save you the time of searching through API documentations and returned data objects, we pulled out all the information you'll need to connect the dots in the sample code. The useful variables are defined in these lines:
 
-### Update BMI Calculator Data
+```
+  //...
+  const hook = req.body.hook; // Type of hook
+  const fhirServer = req.body.fhirServer; // URL for FHIR Server endpoint
+  const patient = req.body.patient; // Patient Identifier
+  const reason = req.body.context.medications[0].reasonCodeableConcept.text // Chosen Problem to Treat
+  //...
+
+  //...
+  const gender = patientReq.gender;
+  const birthDate = patientReq.birthDate;
+  const weight = weightReq.entry[0].resource.valueQuantity.value;
+  const height = heightReq.entry[0].resource.valueQuantity.value;
+  const age = moment().diff(birthDate, 'years');
+  //...
+```
+
+We're going to use these variables to make the calls for Patient data and BMI recommendations depend on the information sent from the **Sandbox**.
+
+### Get Patient Age, Sex, Weight, and Height
+Our patient id is stored in the variable `patient`, and the FHIR server endpoing where this patient's information exists is stored in `fhirServer`. We want the requests for patient age, gender, weight, and height to use these variables.
+
+1.  Change the following lines:
+    ```
+      const patientReq = await getAsync(buildPatientURL('SMART-1551992'));
+      const weightReq = await getAsync(buildObsURL('SMART-1551992', 'weight'));
+      const heightReq = await getAsync(buildObsURL('SMART-1551992', 'height'));
+    ```
+    to:
+    ```
+      const patientReq = await getAsync(buildPatientURL(patient, fhirServer));
+      const weightReq = await getAsync(buildObsURL(patient, 'weight', fhirServer));
+      const heightReq = await getAsync(buildObsURL(patient, 'height', fhirServer));
+    ```
+
+2.  Change the helper functions to accept a `fhir_server` parameter. These lines:
+    ```
+      const buildObsURL = (patientId, text) => `${FHIR_SERVER_PREFIX}/Observation?patient=${patientId}&code:text=${text}&_sort:desc=date&_count=1`;
+      const buildPatientURL = (patientId) => `${FHIR_SERVER_PREFIX}/Patient/${patientId}`;
+    ```
+    should be replaced with these lines: 
+    ```
+      const buildObsURL = (patientId, text, fhir_server) => `${fhir_server}/Observation?patient=${patientId}&code:text=${text}&_sort:desc=date&_count=1`;
+      const buildPatientURL = (patientId, fhir_server) => `${fhir_server}/Patient/${patientId}`;
+    ```
+3.  We want to send the **BMI Tool** the correct units, so we need to change our `weight` and `height` variables a bit. 
+    Change:
+    ```
+      const weight = weightReq.entry[0].resource.valueQuantity.value;
+      const height = heightReq.entry[0].resource.valueQuantity.value;
+
+      //...
+      
+      console.log('Weight: ', weight);
+      console.log('Height: ', height);      
+    ```
+    To:
+    ```
+      const weight = weightReq.entry[0].resource.valueQuantity;
+      const height = heightReq.entry[0].resource.valueQuantity;
+
+      //...
+
+      console.log('Weight: ', weight.value);
+      console.log('Height: ', height.value); 
+    ```
+### Update the data sent to the BMI Calculator
+We're creating the information that we send to the **BMI Calculator API** with the following code:
+```
+  const bmiData = await bmiPostAsync({
+    age: 24,
+    sex: 'f',
+    weight: {
+      value: "85.00",
+      unit: "kg"
+    },
+    height: {
+      value: "170.00",
+      unit: "cm"
+    }
+  });
+```
+As you can see, this code has many hard-coded values. We need to replace them with the variables we just created.
+
+Replace these lines with the following code: 
+```
+  const bmiData = await bmiPostAsync({
+    age: age,
+    sex: (gender == 'female' ? 'f' : 'm'),
+    weight: {
+      value: weight.value,
+      unit: weight.unit
+    },
+    height: {
+      value: height.value,
+      unit: height.unit
+    }
+  });
+```
 
 ### Test Your Handiwork!
-Switch patients
-
 1. Reload the Sandbox by going to https://sandbox.cds-hooks.org/. Make sure your CDS Service is still added.
 
-2. You should be in *Daniel X. Adam's* chart. Go to the `Rx View`, and choose  
+2. You should be in *Daniel X. Adam's* chart. Go to the `Rx View`, and again run through our scenario from **Exercise 1**. Note the information returned by the card.
 
+3. Switch patients to *Lisa P. Coleman* and make sure the card you recieve has patient-specific information that's different from *Daniel's*.
 
 ## Exercise 5 - Return Cards only for Hypertensive disorder
 Right now, our **CDS Service** returns cards for all incoming requests. However, we're making a CDS Hook that should only apply to individuals with certain metabolic-related diagnoses and related treatments. We're going to add a bit of logic that will allow our **Service** to only return **Cards** to those patients with *Hypertensive disorder*. 

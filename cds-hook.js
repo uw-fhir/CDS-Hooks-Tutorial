@@ -1,5 +1,7 @@
 const express = require('express');
+const moment = require('moment');
 const fetch = require('node-fetch');
+const asyncHandler = require('express-async-handler')
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
@@ -42,18 +44,29 @@ const publicHealthResponse = (recoms) => {
   
   return(cards);
 };
-  
+
+const FHIR_SERVER_PREFIX = 'https://api.hspconsortium.org/cdshooksdstu2/open';
+
+const buildObsURL = (patientId, text) => `${FHIR_SERVER_PREFIX}/Observation?patient=${patientId}&code:text=${text}&_sort:desc=date&_count=1`;
+const buildPatientURL = (patientId) =>  `${FHIR_SERVER_PREFIX}/Patient/${patientId}`;
+
+const getAsync = async (url) => await (await fetch(url)).json();
+
 app.use(cors());
 app.use(bodyParser.json());
 
-app.get('/', (req, res) => res.send('PHI 533 CDS Hook Running!'));
+app.get('/', asyncHandler(async (req, res, next) => {
+  res.send('PHI 533 CDS Hook Running!');
+}));
 
-app.get('/cds-services', (req, res) => res.send(services));
+app.get('/cds-services', asyncHandler(async (req, res, next) => {
+  res.send(services);
+}));
 
 /**
  * Actual CDS Hook logic here
  */
-app.post('/cds-services/phi533-prescribe', function (req, res) {
+app.post('/cds-services/phi533-prescribe', asyncHandler(async (req, res, next) => {
   console.log("CDS Request: \n" + JSON.stringify(req.body));
 
   const hook = req.body.hook;
@@ -66,75 +79,22 @@ app.post('/cds-services/phi533-prescribe', function (req, res) {
   console.log("fhirServer: " + fhirServer);
   console.log("patient: " + patient);
   console.log("reason: " + reason);
-  
-  // Example request to get age and sex
-  // TODO: Update to use server and patient from requests
-  var patientReq = fetch('https://api.hspconsortium.org/cdshooksdstu2/open/Observation?patient=SMART-1288992&code:text=bmi&_sort:desc=date&_count=1')
-    .then(res => res.json())
-    .then(json => {
-      const age = 0;
-      const sex = 0; 
-      const bmi = json.entry[0].resource.valueQuantity;
-      
-      console.log("BMI Value: " + bmi.value + " " + bmi.unit);
-    })
-    .catch(err => console.error(err))
-    
-  // Example requests to get latest height and weight
-  // TODO: Update to use server and patient from requests
-  var heightReq = fetch('https://api.hspconsortium.org/cdshooksdstu2/open/Observation?patient=SMART-1288992&code:text=height&_sort:desc=date&_count=1')
-    .then(res => res.json())
-    .then(json => {
-      const height = json.entry[0].resource.valueQuantity;
-      
-      console.log("Height: " + height.value + " " + height.unit);
-    })
-    .catch(err => console.error(err))
 
-  var weightReq = fetch('https://api.hspconsortium.org/cdshooksdstu2/open/Observation?patient=SMART-1288992&code:text=weight&_sort:desc=date&_count=1')
-    .then(res => res.json())
-    .then(json => {
-      const weight = json.entry[0].resource.valueQuantity;
-      
-      console.log("Weight: " + weight.value + " " + weight.unit);
-    })
-    .catch(err => console.error(err))
-      
-  Promise.all([patientReq, heightReq, weightReq]).then(vals => {
-    // TODO: Load this data from patientReq, heightReq, and weightReq
-    const bmiData = {
-      age: 24,
-      sex: 'f',
-      weight: {
-        value: "85.00",
-        unit: "kg"
-      },
-      height: {
-        value: "170.00",
-        unit: "cm"
-      }
-    }
+  const patientReq = await getAsync(buildPatientURL('SMART-1551992'));
+  const weightReq = await getAsync(buildObsURL('SMART-1551992', 'weight'));
+  const heightReq = await getAsync(buildObsURL('SMART-1551992', 'height'));
 
-    fetch('https://bmi.p.mashape.com/', { 
-	    method: 'POST',
-	    body:    JSON.stringify(bmiData),
-      headers: { 
-        'Content-Type': 'application/json',
-        'X-Mashape-Key': 'wwINWStb1qmshrr5MLefJD0RHglLp1IH4ITjsn0zitOozBqxnk',
-        'Accept': 'application/json'
-       },
-    })
-      .then(res => res.json())
-      .then(json => {
-        console.log("BMI RESULTS: ");
-        console.log(json);
-        // Returns static card
-        // TODO: Update to return Info and App cards if hook == 'medication-prescribe' 
-        res.send(publicHealthResponse(json));
-      });
+  const gender = patientReq.gender;
+  const birthDate = patientReq.birthDate;
+  const weight = weightReq.entry[0].resource.valueQuantity.value;
+  const height = heightReq.entry[0].resource.valueQuantity.value;
 
-  });
-  
-});
+  const age = moment().diff(birthDate, 'years');
+
+  console.log('Age: ', age);
+  console.log('Gender: ', gender);
+  console.log('Weight: ', weight);
+  console.log('Height: ', height);
+}));
 
 app.listen(3003, () => console.log('Example app listening on port 3003!'))

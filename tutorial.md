@@ -36,8 +36,9 @@ In this specific scenario, patient **Lisa P. Coleman** is visiting her physician
 4. Click the `Save` button
 5. Click on `Rx View` on the top menu
 6. Select `Hypertensive disorder` from `Treating:` dropdown
-7. Type in `Lopressor` into `Medication` box, and select `Lopressor` => `Metoprolol Tartrate 50 MG Oral Tablet [Lopressor]`. You should see a **CMS Price Check** card returned by one of the demo CDS services. Since we'll be making and testing our own service, we'll want to turn this one off for now to simplify everything.
-8. Go to `CDS Services` > `Configure CDS Services` in the top menu, find the entry for `cms-price-check`, and click the yellow `Enabled?` button to disable the service. 
+7. Type in `Lopressor` into `Medication` box, and select `Lopressor` => `Metoprolol Tartrate 50 MG Oral Tablet [Lopressor]`. You should see a **CMS Price Check** card returned by one of the demo CDS services. 
+8. This service suggests generic drugs to replace Brand-name options by returning a **suggestion card**. Check out the **Response** section to see how this card is formatted. Test out what clicking the `change to generic` button does. 
+8. Since we'll be making and testing our own service, we'll want to turn this one off for now to simplify everything. Go to `CDS Services` > `Configure CDS Services` in the top menu, find the entry for `cms-price-check`, and click the yellow `Enabled?` button to disable the service. 
 9. Make sure the card doesn't show up anymore!
 
 ## Setting up a custom CDS Service
@@ -109,6 +110,26 @@ to send to the **BMI Calculator API** see [this line](https://github.com/uwbhi/p
 
 ### Test Your Handiwork!
 Switch patients
+
+1. Reload the Sandbox by going to https://sandbox.cds-hooks.org/. Make sure your CDS Service is still added.
+
+2. You should be in *Daniel X. Adam's* chart. Go to the `Rx View`, and choose  
+
+
+## Exercise 5 - Return Cards only for Hypertensive disorder
+Right now, our **CDS Service** returns cards for all incoming requests. However, we're making a CDS Hook that should only apply to individuals with certain metabolic-related diagnoses and related treatments. We're going to add a bit of logic that will allow our **Service** to only return **Cards** to those patients with *Hypertensive disorder*. 
+
+The specs (https://cds-hooks.org/specification/1.0/) mention that when no decision support is available, the **CDS Service** should return and empty array of cards. So let's make that happen!
+
+1. In the **Sandbox**, check the `Request` section of the `phi533-prescribe` service.
+2. Look for the `reasonableCodeableConcept` key and note the `text` field. It should be the same as the option you chose in the `Treating` dropdown. We're going to only send back a card for requests where this `text` field is equal to `Hypertensive disorder`
+3. Find this line in your code: `const bmiInfo = publicHealthResponse(bmiData);`
+4. Replace it with the following `if/else` statement: 
+```
+```
+5. Update this line `res.send(bmiInfo);` to `res.send(cardArray);` to send the newly created variable.
+
+
 
 ## Exercise 6 - Add an App Link Card to your CDS Response
 Pretend you have a SMART on FHIR app that can be launched at the following url:

@@ -122,7 +122,12 @@ app.post('/cds-services/phi533-prescribe', asyncHandler(async (req, res, next) =
     }
   });
 
-  const bmiInfo = publicHealthResponse(bmiData);
+  if(reason == "Hypertensive disorder") {
+    cardArray = publicHealthResponse(bmiData);
+ } else {
+    cardArray = 
+ }
+
 
   console.log("Responding with: \n" + JSON.stringify(bmiInfo, null, ' '));
 

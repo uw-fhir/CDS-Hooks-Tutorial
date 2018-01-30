@@ -31,7 +31,7 @@ const publicHealthResponse = (recoms) => {
   var cards = {
     "cards": [
       {
-        "summary": "BMI Information and Recommendations",
+        "summary": "👨🏻‍⚕️ BMI Information and Recommendations",
         "detail": bmiMessage,
         "source": {
           "label": "WA DOH"

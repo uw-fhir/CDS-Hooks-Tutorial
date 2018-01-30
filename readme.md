@@ -8,7 +8,12 @@ Install the prerequisites, then run the application, and expose your endpoint by
 
 ## Prerequisites
 
-Install [NodeJS](https://nodejs.org/en/download/), and if you're on Windows, an SSH client (e.g. [PuTTY](https://www.putty.org/)).
+Install [NodeJS](https://nodejs.org/en/download/), and if you're on Windows, an SSH client. 
+
+One option is [PuTTY](https://www.putty.org/)).
+
+Newer Windows 10 releases have an SSH client built in that can be enabled by following these instructions: 
+https://www.howtogeek.com/336775/how-to-enable-and-use-windows-10s-built-in-ssh-commands/
 
 ## Run
 

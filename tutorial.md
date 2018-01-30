@@ -1,4 +1,5 @@
-# Hooking It All Up
+# Hooking It All Up:
+## A CDS Hooks Tutorial
 
 We learned about the standards (FHIR, SMART on FHIR, CDS Hooks) and tought about how they can foster innovation and improvement in the public health sphere. Now let's combine all of that fresh knowledge to create and test our own **Public Health CDS Service**
 
@@ -105,7 +106,7 @@ Now that we have a **CDS Service** that's available on the web, we need to tell 
 
 3. Fill out the `Discover Endpoint URL:` textbox with your **Service** endpoint: `https://XXXXX.serveo.net/cds-services`. 
 
-4. Click the `Save` button. After a small pause, you should get the following message: `Success: Configured CDS Service(s) found at the discovery endpoint.`
+4. Click the `Save` button. After a small pause, you should get the following message: `Success: Configured CDS Service(s) found at the discovery endpoint.` 
 
 5. Go through **Exercise 1** again. Make sure that instead of the `Price Check` card, you're recieving a card titled `BMI Information and Recommendations`. 
 
@@ -113,8 +114,38 @@ And Voila! The **CDS Hooks Sandbox** is communicating with your **CDS Service** 
 
 ## Overview of Current CDS Service App
 
-(put in what app actually does, and how it links to code)
+If you open the `phi533-cdshook` that you either created with `git checkout` or extracted from the zip file, you'll see a couple of files. By far the most important for this tutorial is the `cds-hook.js` file. This file contains all of the code for our application, and it's the file we'll be modifying later in the tutorial. Make sure you can open and edit it with your chosen text editor!
 
+So, what does our simple, ~130-line CDS Service actually do? 
+
+The application itself is an [Express JS Web Application](https://expressjs.com/). We don't really need to go into all the setup details - all you need to know is that when we run `npm start`, we make this app run on our local computer and listen to specific incoming web requests (for those interested, it's running on port `3003`).  
+
+When we run the following line in our terminal - `ssh -R 80:localhost:3003 serveo.net` - we expose our local application to the web under the serveo.net domain name; this way, the **CDS Sandbox** has an actual web url to communicate with. 
+
+Our app actually only responds to three specific url patterns. Notice how the `cds-hooks.js` file has `app.get('/'...`, `app.get('/cds-services'...`, and `app.post('/cds-services/phi533-prescribe'...` sections. Our app will respond to two `GET` requests and one `POST` request on these three paths. 
+
+Also, notice all of the `console.log()` sections in the `cds-hook.js` file. We put these in to output some intermediate results to the terminal where `npm start` was run. This way, you can follow the app live by looking at the terminal!
+
+All of the CDS Hooks logic lives in the code section preceded by this aptly-named comment:
+```
+/**
+ * Actual CDS Hook logic here
+ */
+``` 
+
+This is a quick overview of what's happening:
+
+1. The app recieves a request from the **Sandbox** that has some data. You can see what data the sandbox sends by unfurling the `Request` tab on the `CDS Service Exchange` section of the **Sandbox**.
+
+2. The app queries a hardcoded **FHIR Endpoint** whose url is stored in the `FHIR_SERVER_PREFIX` variable three times to get gender, age, height, and weight data on a patient with the hardcoded id `SMART-1551992`. It then saves the relevant info in some variables, outputs the variables to the console, and for now, promptly disregards
+them. 
+
+3. Next, the app sets up some information that the **BMI Calculator API** requires to send back BMI recommendations. Currently, this information is also hard-coded and stored in the `bmiData` variable. The info is sent to the **BMI Calculator**, and the results are passed to the `publicHealthResponse` function.
+
+4. The `publicHealthResponse` function reads the BMI recommendations, formats them into a human-readable message, and returns an **Information Card**, created to CDS Hook specifications, that contains the message. 
+
+5. Finally, this reccomendation **Card** is returned by the app to the **CDS Hooks Sandbox**, where it is read and displayed to the user.
+ 
 ## Exercise 4 - Modify BMI Calculator Request to use Patient-specific data.
 Right now, the recommendations sent back to the **Sandbox** never change, because we're using static data
 to send to the **BMI Calculator API**. See [this line](https://github.com/uwbhi/phi533-cdshook/blob/d7da4e9e40a52d476e1111bea1e82227c7c1ae85/cds-hook.js#L104). 
@@ -125,7 +156,7 @@ Let's fix this, and send information about the patient that we're actually treat
 
 To save you the time of searching through API documentations and returned data objects, we pulled out all the information you'll need to connect the dots in the sample code. The useful variables are defined in these lines:
 
-```
+```node
   //...
   const hook = req.body.hook; // Type of hook
   const fhirServer = req.body.fhirServer; // URL for FHIR Server endpoint

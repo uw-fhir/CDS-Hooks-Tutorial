@@ -56,15 +56,47 @@ Lot's to do, so let's go!
 
 ## Exercise 2 - Download and Run Skeleton CDS Service
 
+Clone this repo:
+
+```
+git clone https://github.com/uwbhi/phi533-cdshook.git && cd phi533-cdshook
+```
+
+Or download directly from this link: 
+https://github.com/uwbhi/phi533-cdshook/archive/master.zip
+
+Install the dependencies:
+```
+npm install
+```
+
+Run the application:
+```
+npm start
+```
+
+In a separate terminal window, expose your new CDS Service to the Web:
+
+```
+ssh -R 80:localhost:3003 serveo.net
+```
+
+Make sure to note and copy the forwarding server name!
+It should look something like: `https://XXXXX.serveo.net`.
+
+Now go to `https://XXXXX.serveo.net`. You should get the following message:
+
+```
+PHI 533 CDS Hook Running!
+```
+
 Nice! Your service is up and running!
 
-## Exercise 3 - Publish your Service to the Web
-
-## Exercise 4 - Add your CDS Service to the Sandbox
+## Exercise 3 - Add your CDS Service to the Sandbox
 
 And Voila! The **CDS Hooks Sandbox** is communicating with your **CDS Service** and getting a nice **Card**. 
 
-## Exercise 5 - Modify BMI Calculator Request to use Patient-specific data.
+## Exercise 4 - Modify BMI Calculator Request to use Patient-specific data.
 Right now, the recommendations sent back to the **Sandbox** never change, because we're using static data
 to send to the **BMI Calculator API** see [this line](https://github.com/uwbhi/phi533-cdshook/blob/d7da4e9e40a52d476e1111bea1e82227c7c1ae85/cds-hook.js#L104). Let's fix this, and send information about the patient that we're actually treating!
 
@@ -76,10 +108,34 @@ to send to the **BMI Calculator API** see [this line](https://github.com/uwbhi/p
 ### Update BMI Calculator Data
 
 ### Test Your Handiwork!
+Switch patients
 
 ## Exercise 6 - Add an App Link Card to your CDS Response
+Pretend you have a SMART on FHIR app that can be launched at the following url:
+`https://smart.example.com/launch`. 
+
+You don't have to worry about the details of this app; just know that as part of the SMART specs, 
+SMART apps have a launch URL that an EHR can hit, and which is able to launch the app with the context of the current EHR patient. 
 
 ### Use CDS Hooks API documentation to figure out how to format your card
-
-1. http://cds-hooks.org/specification/1.0/#card-attributes
-2. 
+1. Visit http://cds-hooks.org/specification/1.0/#card-attributes 
+2. Search the docs for information about how to add a `links` card attribute to a card.
+3. Add the following card to your `cards` array that gets returned in the response:
+```
+{
+      "summary": "Obesity Companion",
+      "indicator": "info",
+      "detail": "You're Eligible for the Obesity Companion App!",
+      "source": {
+        "label": "National Obesity Study"
+      },
+      "links": [
+        {
+          "label": "SMART Obesity Companion App",
+          "url": "https://smart.nationalobesitystudy.com/launch",
+          "type": "smart"
+        }
+      ]
+    }
+```
+4. Test out your card on the **CDS Hooks Sandbox**!

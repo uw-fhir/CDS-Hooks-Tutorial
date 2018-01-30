@@ -27,30 +27,43 @@ const publicHealthResponse = (recoms) => {
   var bmiMessage = "Your BMI is " + recoms.bmi.value + ". You are " + recoms.bmi.status + ".";
   bmiMessage = bmiMessage + "\nYou have a " + recoms.bmi.risk;
   bmiMessage = bmiMessage + "\nYour ideal weight is: " + recoms.ideal_weight;
-  
+
   var cards = {
     "cards": [
-      { 
-        "summary": "BMI Information and Recommendations", 
+      {
+        "summary": "BMI Information and Recommendations",
         "detail": bmiMessage,
-        "source": { 
-          "label": "WA DOH" 
-        }, 
-        "indicator": "info", 
-        "suggestions": [] 
+        "source": {
+          "label": "WA DOH"
+        },
+        "indicator": "info",
+        "suggestions": []
       }
     ]
   }
-  
-  return(cards);
+
+  return (cards);
 };
 
 const FHIR_SERVER_PREFIX = 'https://api.hspconsortium.org/cdshooksdstu2/open';
+const BMI_SERVER_PREFIX = 'https://bmi.p.mashape.com/';
 
 const buildObsURL = (patientId, text) => `${FHIR_SERVER_PREFIX}/Observation?patient=${patientId}&code:text=${text}&_sort:desc=date&_count=1`;
-const buildPatientURL = (patientId) =>  `${FHIR_SERVER_PREFIX}/Patient/${patientId}`;
+const buildPatientURL = (patientId) => `${FHIR_SERVER_PREFIX}/Patient/${patientId}`;
 
 const getAsync = async (url) => await (await fetch(url)).json();
+
+const bmiPostAsync = async (payload) => {
+  return await (await fetch(BMI_SERVER_PREFIX, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Mashape-Key': 'wwINWStb1qmshrr5MLefJD0RHglLp1IH4ITjsn0zitOozBqxnk',
+        'Accept': 'application/json'
+      }
+    })).json();
+};
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -67,13 +80,13 @@ app.get('/cds-services', asyncHandler(async (req, res, next) => {
  * Actual CDS Hook logic here
  */
 app.post('/cds-services/phi533-prescribe', asyncHandler(async (req, res, next) => {
-  console.log("CDS Request: \n" + JSON.stringify(req.body));
+  console.log("CDS Request: \n" + JSON.stringify(req.body, null, ' '));
 
   const hook = req.body.hook;
   const fhirServer = req.body.fhirServer;
   const patient = req.body.patient;
   const reason = req.body.context.medications[0].reasonCodeableConcept.text
-  
+
   console.log("Useful parameters:");
   console.log("hook: " + hook);
   console.log("fhirServer: " + fhirServer);
@@ -95,6 +108,25 @@ app.post('/cds-services/phi533-prescribe', asyncHandler(async (req, res, next) =
   console.log('Gender: ', gender);
   console.log('Weight: ', weight);
   console.log('Height: ', height);
+
+  const bmiData = await bmiPostAsync({
+    age: 24,
+    sex: 'f',
+    weight: {
+      value: "85.00",
+      unit: "kg"
+    },
+    height: {
+      value: "170.00",
+      unit: "cm"
+    }
+  });
+
+  const bmiInfo = publicHealthResponse(bmiData);
+
+  console.log("Responding with: \n" + JSON.stringify(bmiInfo, null, ' '));
+
+  res.send(bmiInfo);
 }));
 
 app.listen(3003, () => console.log('Example app listening on port 3003!'))

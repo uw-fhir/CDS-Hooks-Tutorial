@@ -1,7 +1,7 @@
 # Hooking It All Up Together:
 ## A CDS Hooks Tutorial
 
-We learned about the standards (FHIR, SMART on FHIR, CDS Hooks) and tought about how they can foster innovation and improvement in the public health sphere. Now let's combine all of that fresh knowledge to create and test our own **Public Health CDS Service**
+We learned about the standards (FHIR, SMART on FHIR, CDS Hooks) and thought about how they can foster innovation and improvement in the public health sphere. Now let's combine all of that fresh knowledge to create and test our own **Public Health CDS Service**.
 
 ## Some Prereq's
 
@@ -18,7 +18,7 @@ We learned about the standards (FHIR, SMART on FHIR, CDS Hooks) and tought about
       * [Notepad++](https://notepad-plus-plus.org/download/) (Windows only)
       * [VS Code](https://code.visualstudio.com/) (more advanced)
 
-    c. **Git**: (optional) We'll use it to download the server code. If you don't want to install it, you can download the code in a .zip file.
+    c. **Git**: (optional) We'll use it to download the server code. If you don't want to install it, you can download the code in a [.zip file](https://github.com/uwbhi/phi533-cdshook/archive/master.zip).
 
 3. To make this tutorial more fun, we're hooking up recomendations from an existant BMI Service - an BMI Calculator API that can be found here: https://market.mashape.com/navii/bmi-calculator
 
@@ -29,7 +29,7 @@ You’re working on a nation-wide project whose goal is to study and combat obes
 
 1. Report on obesity-related health issues at the point of care
 2. Provide feedback to the patient on how their health stacks up with their peers
-3. Allow patient to be easily recruited as a participants into a large-scale longitudinal obesity study
+3. Allow patients to be easily recruited as participants into a large-scale longitudinal obesity study
 
 In this specific scenario, patient **Lisa P. Coleman** is visiting her physician. The physician diagnoses her with **Hypertensive disorder**, and is prescribing **Lopressor** to treat her high blood pressure. 
 
@@ -144,7 +144,7 @@ them.
 
 4. The `publicHealthResponse` function reads the BMI recommendations, formats them into a human-readable message, and returns an **Information Card**, created to CDS Hook specifications, that contains the message. 
 
-5. Finally, this reccomendation **Card** is returned by the app to the **CDS Hooks Sandbox**, where it is read and displayed to the user.
+5. Finally, this recommendation **Card** is returned by the app to the **CDS Hooks Sandbox**, where it is read and displayed to the user.
  
 ## Exercise 4 - Modify BMI Calculator Request to use Patient-specific data.
 Right now, the recommendations sent back to the **Sandbox** never change, because we're using static data
@@ -202,7 +202,7 @@ Our patient id is stored in the variable `patient`, and the FHIR server endpoing
       const buildObsURL = (patientId, text, fhir_server) => `${fhir_server}/Observation?patient=${patientId}&code:text=${text}&_sort:desc=date&_count=1`;
       const buildPatientURL = (patientId, fhir_server) => `${fhir_server}/Patient/${patientId}`;
     ```
-3.  We want to send the **BMI Tool** the correct units. Currently, we're ignoring the unit information that's sent back from the **FHIR Endpoint**. To pass this info on to the **BMI Calculator*, we need to change the `weight` and `height` variable definition up a bit. 
+3.  We want to send the **BMI Tool** the correct units. Currently, we're ignoring the unit information that's sent back from the **FHIR Endpoint**. To pass this info on to the **BMI Calculator**, we need to change the `weight` and `height` variable definition up a bit. 
     Change the following lines in */cds-hook.js*:
     ```node
       const weight = weightReq.entry[0].resource.valueQuantity.value;
@@ -271,7 +271,7 @@ The specs (https://cds-hooks.org/specification/1.0/) mention that when no decisi
 
 1. In the right side of the **Sandbox** screen labeled **CDS Service Exchange**, select your `phi533-prescribe` service from the `Select a Service` dropdown. Then, click on the `Request` section to see what data is being sent to our application by the **Sandbox**.
 
-2. Look for the `reasonableCodeableConcept` key and note the `text` field. It should be the same as the option you chose in the `Treating` dropdown. We're going to only send back a card for requests where this `text` field is equal to `Hypertensive disorder` or `Essential hypertension`
+2. Look for the `reasonCodeableConcept` key and note the `text` field. It should be the same as the option you chose in the `Treating` dropdown. We're going to only send back a card for requests where this `text` field is equal to `Hypertensive disorder` or `Essential hypertension`
 
 3. Find this line in the */cds-hook.js* file: `const bmiInfo = publicHealthResponse(bmiData);`
 
@@ -302,7 +302,7 @@ The specs (https://cds-hooks.org/specification/1.0/) mention that when no decisi
 
 ## Exercise 6 - Add an App Link Card to your CDS Response
 Pretend you have a SMART on FHIR app that can be launched at the following url:
-`https://smart.example.com/launch`. 
+`https://smart.nationalobesitystudy.com/launch`. 
 
 You don't have to worry about the details of this app; just know that as part of the SMART specs, 
 SMART apps have a launch URL that an EHR can hit, and which is able to launch the app with the context of the current EHR patient. 

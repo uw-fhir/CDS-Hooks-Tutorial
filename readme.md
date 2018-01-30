@@ -38,14 +38,20 @@ ssh -R 80:localhost:3003 serveo.net
 
 Note the forwarding server name (something like `https://XXXXX.serveo.net`).
 
-## Configure Sandbox
+## Testing
+
+### Basic Check
+
+Navigate to `https://XXXXX.serveo.net/` and make sure you see a message that the service is running.
+
+### Configure Sandbox
 
 Navigate to the [CDS Hooks sandbox](http://sandbox.cds-hooks.org/). Click the **CDS Services** link at the
 top right and choose **ADD CDS Service**.
 
 In the input box, enter `https://XXXXX.serveo.net/cds-services`, using the SSH tunnel output from above, but appending `/cds-services` to the URL.
 
-## Testing
+Then test the config:
 
 1. Navigate to the Rx View (by clicking **Rx View** from the navbar at the top), and select any problem from the **Treating** dropdown box.
 

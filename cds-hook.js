@@ -38,6 +38,21 @@ const publicHealthResponse = (recoms) => {
         },
         "indicator": "info",
         "suggestions": []
+      },
+      {
+        "summary": "Obesity Companion",
+        "indicator": "info",
+        "detail": "You're Eligible for the Obesity Companion App!",
+        "source": {
+          "label": "National Obesity Study"
+        },
+        "links": [
+          {
+            "label": "SMART Obesity Companion App",
+            "url": "https://smart.nationalobesitystudy.com/launch",
+            "type": "smart"
+          }
+        ]
       }
     ]
   }
@@ -122,16 +137,15 @@ app.post('/cds-services/phi533-prescribe', asyncHandler(async (req, res, next) =
     }
   });
 
-  if(reason == "Hypertensive disorder") {
+  var cardArray = {};
+  if (reason == "Hypertensive disorder") {
     cardArray = publicHealthResponse(bmiData);
- } else {
-    cardArray = 
- }
+  } else {
+    cardArray = { "cards": [] }
+  }
 
-
-  console.log("Responding with: \n" + JSON.stringify(bmiInfo, null, ' '));
-
-  res.send(bmiInfo);
+  console.log("Responding with: \n" + JSON.stringify(cardArray, null, ' '));
+  res.send(cardArray);
 }));
 
 app.listen(3003, () => console.log('Example app listening on port 3003!'))

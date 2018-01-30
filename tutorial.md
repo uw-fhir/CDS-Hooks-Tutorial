@@ -122,14 +122,35 @@ Right now, our **CDS Service** returns cards for all incoming requests. However,
 The specs (https://cds-hooks.org/specification/1.0/) mention that when no decision support is available, the **CDS Service** should return and empty array of cards. So let's make that happen!
 
 1. In the **Sandbox**, check the `Request` section of the `phi533-prescribe` service.
+
 2. Look for the `reasonableCodeableConcept` key and note the `text` field. It should be the same as the option you chose in the `Treating` dropdown. We're going to only send back a card for requests where this `text` field is equal to `Hypertensive disorder`
+
 3. Find this line in your code: `const bmiInfo = publicHealthResponse(bmiData);`
-4. Replace it with the following `if/else` statement: 
-```
-```
-5. Update this line `res.send(bmiInfo);` to `res.send(cardArray);` to send the newly created variable.
 
+4.  Replace it with the following `if/else` statement: 
+    ```
+      var cardArray = {};
+      if (reason == "Hypertensive disorder") {
+        cardArray = publicHealthResponse(bmiData);
+      } else {
+        cardArray = { "cards": [] }
+      }
+    ```
 
+5.  Update these lines:
+    ```
+      console.log("Responding with: \n" + JSON.stringify(bmiInfo, null, ' '));
+      
+      res.send(bmiInfo);
+    ```
+    with:
+    ```
+      console.log("Responding with: \n" + JSON.stringify(cardArray, null, ' '));
+      res.send(cardArray);
+    ```
+    This allows us to send back the updated variable, which either contains an empty **Card** array or our relevant cards. 
+
+6. In the **Sandbox**, test out the new functionality; You should be only see cards when `Hypertensive disorder` is chosen in the `Treating:` dropdown!
 
 ## Exercise 6 - Add an App Link Card to your CDS Response
 Pretend you have a SMART on FHIR app that can be launched at the following url:
@@ -141,22 +162,22 @@ SMART apps have a launch URL that an EHR can hit, and which is able to launch th
 ### Use CDS Hooks API documentation to figure out how to format your card
 1. Visit http://cds-hooks.org/specification/1.0/#card-attributes 
 2. Search the docs for information about how to add a `links` card attribute to a card.
-3. Add the following card to your `cards` array that gets returned in the response:
-```
-{
-      "summary": "Obesity Companion",
-      "indicator": "info",
-      "detail": "You're Eligible for the Obesity Companion App!",
-      "source": {
-        "label": "National Obesity Study"
-      },
-      "links": [
-        {
-          "label": "SMART Obesity Companion App",
-          "url": "https://smart.nationalobesitystudy.com/launch",
-          "type": "smart"
+3. Add the following card to your `cards` array (found in the `publicHealthResponse` function) that gets returned in the response:
+    ```
+      {
+          "summary": "Obesity Companion",
+          "indicator": "info",
+          "detail": "You're Eligible for the Obesity Companion App!",
+          "source": {
+            "label": "National Obesity Study"
+          },
+          "links": [
+            {
+              "label": "SMART Obesity Companion App",
+              "url": "https://smart.nationalobesitystudy.com/launch",
+              "type": "smart"
+            }
+          ]
         }
-      ]
-    }
-```
+    ```
 4. Test out your card on the **CDS Hooks Sandbox**!

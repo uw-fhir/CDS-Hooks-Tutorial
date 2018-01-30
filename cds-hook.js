@@ -20,20 +20,29 @@ const services = {
 };
 
 // Cards
-const publicHealthResponse = {
-  "cards": [
-    { 
-      "summary": "Public Health Alert", 
-      "detail": "This patient qualifies for enrolment in a Public Health study. Click [here](https://www.doh.wa.gov/) to enroll.",
-      "source": { 
-        "label": "WA DOH" 
-      }, 
-      "indicator": "info", 
-      "suggestions": [] 
-    }
-  ]
+// This patient qualifies for enrolment in a Public Health study. Click [here](https://www.doh.wa.gov/) to enroll.
+const publicHealthResponse = (recoms) => {
+  var bmiMessage = "Your BMI is " + recoms.bmi.value + ". You are " + recoms.bmi.status + ".";
+  bmiMessage = bmiMessage + "\nYou have a " + recoms.bmi.risk;
+  bmiMessage = bmiMessage + "\nYour ideal weight is: " + recoms.ideal_weight;
+  
+  var cards = {
+    "cards": [
+      { 
+        "summary": "BMI Information and Recommendations", 
+        "detail": bmiMessage,
+        "source": { 
+          "label": "WA DOH" 
+        }, 
+        "indicator": "info", 
+        "suggestions": [] 
+      }
+    ]
+  }
+  
+  return(cards);
 };
-
+  
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -118,11 +127,11 @@ app.post('/cds-services/phi533-prescribe', function (req, res) {
       .then(json => {
         console.log("BMI RESULTS: ");
         console.log(json);
+        res.send(publicHealthResponse(json));
       });
 
     // Returns static card
     // TODO: Update to return Info and App cards if hook == 'medication-prescribe' 
-    res.send(publicHealthResponse);
   });
   
 });

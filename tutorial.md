@@ -91,9 +91,18 @@ Now go to `https://XXXXX.serveo.net`. You should get the following message:
 PHI 533 CDS Hook Running!
 ```
 
-Nice! Your service is up and running!
+Nice! Your **Service** is up and running!
 
 ## Exercise 3 - Add your CDS Service to the Sandbox
+
+Now that we have a **CDS Service** that's available on the web, we need to tell the **Sandbox** about it. 
+1. Your **CDS Service** endpoint provides a list of CDS Services when accessed with the following path: `https://XXXXX.serveo.net/cds-services`. Go to this url in your browser to see what it returns. 
+
+2. Click on the `CDS Services` button in the top menu, and choose `Add CDS Service` from the dropdown
+
+3. Fill out the `Discover Endpoint URL:` textbox with your **Service** endpoint: `https://XXXXX.serveo.net/cds-services`. 
+
+4. Click the `Save` button. After a small pause, you should get the following message: `Success: Configured CDS Service(s) found at the discovery endpoint.`
 
 And Voila! The **CDS Hooks Sandbox** is communicating with your **CDS Service** and getting a nice **Card**. 
 

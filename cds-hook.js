@@ -57,21 +57,74 @@ app.post('/cds-services/phi533-prescribe', function (req, res) {
   console.log("fhirServer: " + fhirServer);
   console.log("patient: " + patient);
   console.log("reason: " + reason);
-
-  // Example request to get latest BMI Value
+  
+  // Example request to get age and sex
   // TODO: Update to use server and patient from requests
-  fetch('https://api.hspconsortium.org/cdshooksdstu2/open/Observation?patient=SMART-1288992&code:text=bmi&_sort:desc=date&_count=1')
+  var patientReq = fetch('https://api.hspconsortium.org/cdshooksdstu2/open/Observation?patient=SMART-1288992&code:text=bmi&_sort:desc=date&_count=1')
     .then(res => res.json())
     .then(json => {
+      const age = 0;
+      const sex = 0; 
       const bmi = json.entry[0].resource.valueQuantity;
       
       console.log("BMI Value: " + bmi.value + " " + bmi.unit);
     })
     .catch(err => console.error(err))
     
-  // Returns static card
-  // TODO: Update to return Info and App cards if hook == 'medication-prescribe' 
-  res.send(publicHealthResponse);
+  // Example requests to get latest height and weight
+  // TODO: Update to use server and patient from requests
+  var heightReq = fetch('https://api.hspconsortium.org/cdshooksdstu2/open/Observation?patient=SMART-1288992&code:text=height&_sort:desc=date&_count=1')
+    .then(res => res.json())
+    .then(json => {
+      const height = json.entry[0].resource.valueQuantity;
+      
+      console.log("Height: " + height.value + " " + height.unit);
+    })
+    .catch(err => console.error(err))
+
+  var weightReq = fetch('https://api.hspconsortium.org/cdshooksdstu2/open/Observation?patient=SMART-1288992&code:text=weight&_sort:desc=date&_count=1')
+    .then(res => res.json())
+    .then(json => {
+      const weight = json.entry[0].resource.valueQuantity;
+      
+      console.log("Weight: " + weight.value + " " + weight.unit);
+    })
+    .catch(err => console.error(err))
+      
+  Promise.all([patientReq, heightReq, weightReq]).then(vals => {
+    const bmiData = {
+      age: 24,
+      sex: 'f',
+      weight: {
+        value: "85.00",
+        unit: "kg"
+      },
+      height: {
+        value: "170.00",
+        unit: "cm"
+      }
+    }
+
+    fetch('https://bmi.p.mashape.com/', { 
+	    method: 'POST',
+	    body:    JSON.stringify(bmiData),
+      headers: { 
+        'Content-Type': 'application/json',
+        'X-Mashape-Key': 'wwINWStb1qmshrr5MLefJD0RHglLp1IH4ITjsn0zitOozBqxnk',
+        'Accept': 'application/json'
+       },
+    })
+      .then(res => res.json())
+      .then(json => {
+        console.log("BMI RESULTS: ");
+        console.log(json);
+      });
+
+    // Returns static card
+    // TODO: Update to return Info and App cards if hook == 'medication-prescribe' 
+    res.send(publicHealthResponse);
+  });
+  
 });
 
 app.listen(3003, () => console.log('Example app listening on port 3003!'))

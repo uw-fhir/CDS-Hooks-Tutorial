@@ -17,8 +17,8 @@ We learned about the standards (FHIR, SMART on FHIR, CDS Hooks) and tought about
 
 ## The Scenario
 You’re working on a nation-wide project whose goal is to both study and combat obesity in the United States. Your job involves designing a CDS Hook that supports the study objectives. The hook should allow you to:  
-    1. Report on obesity-related health issues at the point of care 
-    2. Provide feedback to the patient on how their health stacks up with their peers
+    1. Report on obesity-related health issues at the point of care.
+    2. Provide feedback to the patient on how their health stacks up with their peers.
     3.  the metabolic state of the patient, and 3) Recruit participants into a large-scale longitudinal obesity study. 
 	In this specific scenario, patient Lisa P. Coleman is visiting her physician. The physician diagnosed her with Hypertensive disorder, and is prescribing Lopressor to Lisa to treat her high blood pressure. Your CDS Hook is designed to trigger (among other things) on the prescription of such a hypertension drug (perhaps in order to find participants with different pharmaceutical treatments for comparison). 
 	Lisa and her physician receive two kinds of cards after the CDS Hook trigger: 1) an informational card comparing Lisa’s health metrics to those receiving the same treatment, and 2) an app card that allows Lisa access an app can give informational services and can consent willing participants to take part in a Info automatically received through FHIR can be used, for example, to pair participants with similar demographics and/or health metrics undergoing different interventions, and then track their progress). 

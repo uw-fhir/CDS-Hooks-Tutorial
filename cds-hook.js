@@ -24,6 +24,9 @@ const services = {
 // Cards
 // This patient qualifies for enrolment in a Public Health study. Click [here](https://www.doh.wa.gov/) to enroll.
 const publicHealthResponse = (recoms) => {
+  if(recoms.bmi === undefined)
+    return {"cards": []};
+  
   var bmiMessage = "Your BMI is " + recoms.bmi.value + ". You are " + recoms.bmi.status + ".";
   bmiMessage = bmiMessage + "\nYou have a " + recoms.bmi.risk;
   bmiMessage = bmiMessage + "\nYour ideal weight is: " + recoms.ideal_weight;
@@ -81,11 +84,14 @@ app.get('/cds-services', asyncHandler(async (req, res, next) => {
  */
 app.post('/cds-services/phi533-prescribe', asyncHandler(async (req, res, next) => {
   console.log("CDS Request: \n" + JSON.stringify(req.body, null, ' '));
-
-  const hook = req.body.hook;
-  const fhirServer = req.body.fhirServer;
-  const patient = req.body.patient;
-  const reason = req.body.context.medications[0].reasonCodeableConcept.text
+  
+  // Extracts useful information from the data sent from the Sandbox
+  const hook = req.body.hook; // Type of hook
+  const fhirServer = req.body.fhirServer; // URL for FHIR Server endpoint
+  const patient = req.body.patient; // Patient Identifier
+  // Chosen Problem to Treat
+  const med = req.body.context.medications[0];
+  const reason = (med.reasonCodeableConcept === undefined ? "" : med.reasonCodeableConcept.text); 
 
   console.log("Useful parameters:");
   console.log("hook: " + hook);
@@ -122,6 +128,8 @@ app.post('/cds-services/phi533-prescribe', asyncHandler(async (req, res, next) =
     }
   });
 
+  console.log("BMI Data:" + JSON.stringify(bmiData, null, ' '));
+  
   const bmiInfo = publicHealthResponse(bmiData);
 
   console.log("Responding with: \n" + JSON.stringify(bmiInfo, null, ' '));

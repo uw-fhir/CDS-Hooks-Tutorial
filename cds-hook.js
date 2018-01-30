@@ -101,6 +101,7 @@ app.post('/cds-services/phi533-prescribe', function (req, res) {
     .catch(err => console.error(err))
       
   Promise.all([patientReq, heightReq, weightReq]).then(vals => {
+    // TODO: Load this data from patientReq, heightReq, and weightReq
     const bmiData = {
       age: 24,
       sex: 'f',
@@ -127,11 +128,11 @@ app.post('/cds-services/phi533-prescribe', function (req, res) {
       .then(json => {
         console.log("BMI RESULTS: ");
         console.log(json);
+        // Returns static card
+        // TODO: Update to return Info and App cards if hook == 'medication-prescribe' 
         res.send(publicHealthResponse(json));
       });
 
-    // Returns static card
-    // TODO: Update to return Info and App cards if hook == 'medication-prescribe' 
   });
   
 });

@@ -156,6 +156,7 @@ Let's fix this, and send information about the patient that we're actually treat
 
 To save you the time of searching through API documentations and returned data objects, we pulled out all the information you'll need to connect the dots in the sample code. The useful variables are defined in these lines:
 
+*/cds-hook.js*
 ```node
   //...
   const hook = req.body.hook; // Type of hook
@@ -178,32 +179,32 @@ We're going to use these variables to make the calls for Patient data and BMI re
 ### Get Patient Age, Sex, Weight, and Height
 Our patient id is stored in the variable `patient`, and the FHIR server endpoing where this patient's information exists is stored in `fhirServer`. We want the requests for patient age, gender, weight, and height to use these variables.
 
-1.  Change the following lines:
-    ```
+1.  Change the following lines in */cds-hook.js*:
+    ```node
       const patientReq = await getAsync(buildPatientURL('SMART-1551992'));
       const weightReq = await getAsync(buildObsURL('SMART-1551992', 'weight'));
       const heightReq = await getAsync(buildObsURL('SMART-1551992', 'height'));
     ```
     to:
-    ```
+    ```node
       const patientReq = await getAsync(buildPatientURL(patient, fhirServer));
       const weightReq = await getAsync(buildObsURL(patient, 'weight', fhirServer));
       const heightReq = await getAsync(buildObsURL(patient, 'height', fhirServer));
     ```
 
-2.  Change the helper functions to accept a `fhir_server` parameter. These lines:
-    ```
+2.  Change the helper functions to accept a `fhir_server` parameter. These lines in */cds-hook.js*:
+    ```node
       const buildObsURL = (patientId, text) => `${FHIR_SERVER_PREFIX}/Observation?patient=${patientId}&code:text=${text}&_sort:desc=date&_count=1`;
       const buildPatientURL = (patientId) => `${FHIR_SERVER_PREFIX}/Patient/${patientId}`;
     ```
     should be replaced with these lines: 
-    ```
+    ```node
       const buildObsURL = (patientId, text, fhir_server) => `${fhir_server}/Observation?patient=${patientId}&code:text=${text}&_sort:desc=date&_count=1`;
       const buildPatientURL = (patientId, fhir_server) => `${fhir_server}/Patient/${patientId}`;
     ```
 3.  We want to send the **BMI Tool** the correct units, so we need to change our `weight` and `height` variables a bit. 
-    Change:
-    ```
+    Change the following lines in */cds-hook.js*:
+    ```node
       const weight = weightReq.entry[0].resource.valueQuantity.value;
       const height = heightReq.entry[0].resource.valueQuantity.value;
 
@@ -213,7 +214,7 @@ Our patient id is stored in the variable `patient`, and the FHIR server endpoing
       console.log('Height: ', height);      
     ```
     To:
-    ```
+    ```node
       const weight = weightReq.entry[0].resource.valueQuantity;
       const height = heightReq.entry[0].resource.valueQuantity;
 
@@ -224,7 +225,7 @@ Our patient id is stored in the variable `patient`, and the FHIR server endpoing
     ```
 ### Update the data sent to the BMI Calculator
 We're creating the information that we send to the **BMI Calculator API** with the following code:
-```
+```node
   const bmiData = await bmiPostAsync({
     age: 24,
     sex: 'f',
@@ -240,8 +241,8 @@ We're creating the information that we send to the **BMI Calculator API** with t
 ```
 As you can see, this code has many hard-coded values. We need to replace them with the variables we just created.
 
-Replace these lines with the following code: 
-```
+Replace these lines with the following code in the */cds-hook.js* file: 
+```node
   const bmiData = await bmiPostAsync({
     age: age,
     sex: (gender == 'female' ? 'f' : 'm'),
@@ -272,10 +273,10 @@ The specs (https://cds-hooks.org/specification/1.0/) mention that when no decisi
 
 2. Look for the `reasonableCodeableConcept` key and note the `text` field. It should be the same as the option you chose in the `Treating` dropdown. We're going to only send back a card for requests where this `text` field is equal to `Hypertensive disorder`
 
-3. Find this line in your code: `const bmiInfo = publicHealthResponse(bmiData);`
+3. Find this line in the */cds-hook.js* file: `const bmiInfo = publicHealthResponse(bmiData);`
 
 4.  Replace it with the following `if/else` statement: 
-    ```
+    ```node
       var cardArray = {};
       if (reason == "Hypertensive disorder") {
         cardArray = publicHealthResponse(bmiData);
@@ -284,14 +285,14 @@ The specs (https://cds-hooks.org/specification/1.0/) mention that when no decisi
       }
     ```
 
-5.  Update these lines:
-    ```
+5.  Update these lines in */cds-hook.js*:
+    ```node
       console.log("Responding with: \n" + JSON.stringify(bmiInfo, null, ' '));
       
       res.send(bmiInfo);
     ```
     with:
-    ```
+    ```node
       console.log("Responding with: \n" + JSON.stringify(cardArray, null, ' '));
       res.send(cardArray);
     ```
@@ -308,9 +309,11 @@ SMART apps have a launch URL that an EHR can hit, and which is able to launch th
 
 ### Use CDS Hooks API documentation to figure out how to format your card
 1. Visit http://cds-hooks.org/specification/1.0/#card-attributes 
-2. Search the docs for information about how to add a `links` card attribute to a card.
-3. Add the following card to your `cards` array (found in the `publicHealthResponse` function) that gets returned in the response:
-    ```
+
+2. Search the docs for information about the `links` attribute attribute. This attribute can be used to return cards that can launch specific SMART on FHIR apps straight from the EHR. Search for `Example response` on the page to see an example - very self-explanatory. 
+
+3.  Add the following card - modeled on the example we just saw - to your `cards` array. 
+    ```json
       {
           "summary": "Obesity Companion",
           "indicator": "info",
@@ -327,4 +330,23 @@ SMART apps have a launch URL that an EHR can hit, and which is able to launch th
           ]
         }
     ```
-4. Test out your card on the **CDS Hooks Sandbox**!
+
+    This array can be found in the the `publicHealthResponse` function in the *cds-hook.js* file. It should look like this: 
+
+    ```node
+      var cards = { "cards": [
+          {
+            "summary": "👨🏻‍⚕️ BMI Information and Recommendations",
+            "detail": bmiMessage,
+            "source": {
+              "label": "WA DOH"
+            },
+            "indicator": "info",
+            "suggestions": []
+          }, 
+          // Put 2nd Card Here!
+        ]
+      }
+    ```
+
+4. Test out your card on the **CDS Hooks Sandbox** by again running through the **Scenario**

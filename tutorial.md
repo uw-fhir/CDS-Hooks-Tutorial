@@ -1,4 +1,5 @@
-# Hooking It All Up
+# Hooking It All Up Together:
+## A CDS Hooks Tutorial
 
 We learned about the standards (FHIR, SMART on FHIR, CDS Hooks) and tought about how they can foster innovation and improvement in the public health sphere. Now let's combine all of that fresh knowledge to create and test our own **Public Health CDS Service**
 
@@ -8,7 +9,7 @@ We learned about the standards (FHIR, SMART on FHIR, CDS Hooks) and tought about
 
 2. Since each of your computers will be used to temporarily host a CDS Service, we'll need to make sure all of you have a couple things installed. 
 
-    a. **Node.js, npm, and ssh**: We'll be booting up a simple server that will listen to incoming CDS requests and respond with the appropriate cards. This server runs on `Node.js`; `npm` is the Node.js package manager that allows for a quick setup, and an `ssh` client will be used to listen to incoming requests from the CDS Sandbox. Follow the instructions [here](https://github.com/uwbhi/phi533-cdshook/readme.md) to install them!  
+    a. **Node.js, npm, and ssh**: We'll be booting up a simple server that will listen to incoming CDS requests and respond with the appropriate cards. This server runs on `Node.js`; `npm` is the Node.js package manager that allows for a quick setup, and an `ssh` client will be used to listen to incoming requests from the CDS Sandbox. Follow the instructions [here](https://github.com/uwbhi/phi533-cdshook/blob/master/readme.md) to install them!  
 
     b. **Some capable text editor**: If you don't have one, you should quickly download one. Here are some options:
     
@@ -45,7 +46,7 @@ In this specific scenario, patient **Lisa P. Coleman** is visiting her physician
 9. Make sure the card doesn't show up anymore!
 
 ## Setting up a custom CDS Service
-We want our hook to trigger on the same type of action as the CMS Price Check - `medication-prescribe`. In the **Sandbox**, this type of hook gets triggered when the scenario above is acted out, and a request is sent to all **CDS Services** with this type of hook. The **Sandbox** then listens to responses from these services in the form of **Cards**. 	
+We want our hook to trigger on the same type of action as the CMS Price Check: `medication-prescribe`. In the **CDS Hooks Sandbox**, any time we make a change to the form in `Rx View`, the `medication-prescribe` hook is triggered, and a request is sent to all **CDS Services** that have this hook in their configuration. Our configuration, which can be found in *cds-hooks.js* in the `services` variable, has this hook specified and gets this exact treatment. The **Sandbox** then listens to responses from these services in the form of **Cards**. 	
     
 We want Lisa and her physician to receive two **Cards** after Lisa is prescribed a medication for her hypertension:
 
@@ -105,7 +106,7 @@ Now that we have a **CDS Service** that's available on the web, we need to tell 
 
 3. Fill out the `Discover Endpoint URL:` textbox with your **Service** endpoint: `https://XXXXX.serveo.net/cds-services`. 
 
-4. Click the `Save` button. After a small pause, you should get the following message: `Success: Configured CDS Service(s) found at the discovery endpoint.`
+4. Click the `Save` button. After a small pause, you should get the following message: `Success: Configured CDS Service(s) found at the discovery endpoint.` 
 
 5. Go through **Exercise 1** again. Make sure that instead of the `Price Check` card, you're recieving a card titled `BMI Information and Recommendations`. 
 
@@ -113,8 +114,38 @@ And Voila! The **CDS Hooks Sandbox** is communicating with your **CDS Service** 
 
 ## Overview of Current CDS Service App
 
-(put in what app actually does, and how it links to code)
+If you open the `phi533-cdshook` that you either created with `git checkout` or extracted from the zip file, you'll see a couple of files. By far the most important for this tutorial is the `cds-hook.js` file. This file contains all of the code for our application, and it's the file we'll be modifying later in the tutorial. Make sure you can open and edit it with your chosen text editor!
 
+So, what does our simple, ~130-line CDS Service actually do? 
+
+The application itself is an [Express JS Web Application](https://expressjs.com/). We don't really need to go into all the setup details - all you need to know is that when we run `npm start`, we make this app run on our local computer and listen to specific incoming web requests (for those interested, it's running on port `3003`).  
+
+When we run the following line in our terminal - `ssh -R 80:localhost:3003 serveo.net` - we expose our local application to the web under the serveo.net domain name; this way, the **CDS Sandbox** has an actual web url to communicate with. 
+
+Our app actually only responds to three specific url patterns. Notice how the `cds-hooks.js` file has `app.get('/'...`, `app.get('/cds-services'...`, and `app.post('/cds-services/phi533-prescribe'...` sections. Our app will respond to two `GET` requests and one `POST` request on these three paths. 
+
+Also, notice all of the `console.log()` sections in the `cds-hook.js` file. We put these in to output some intermediate results to the terminal where `npm start` was run. This way, you can follow the app live by looking at the terminal!
+
+All of the CDS Hooks logic lives in the code section preceded by this aptly-named comment:
+```
+/**
+ * Actual CDS Hook logic here
+ */
+``` 
+
+This is a quick overview of what's happening:
+
+1. The app recieves a request from the **Sandbox** that has some data. You can see what data the sandbox sends by unfurling the `Request` tab on the `CDS Service Exchange` section of the **Sandbox**.
+
+2. The app queries a hardcoded **FHIR Endpoint** whose url is stored in the `FHIR_SERVER_PREFIX` variable three times to get gender, age, height, and weight data on a patient with the hardcoded id `SMART-1551992`. It then saves the relevant info in some variables, outputs the variables to the console, and for now, promptly disregards
+them. 
+
+3. Next, the app sets up some information that the **BMI Calculator API** requires to send back BMI recommendations. Currently, this information is also hard-coded and stored in the `bmiData` variable. The info is sent to the **BMI Calculator**, and the results are passed to the `publicHealthResponse` function.
+
+4. The `publicHealthResponse` function reads the BMI recommendations, formats them into a human-readable message, and returns an **Information Card**, created to CDS Hook specifications, that contains the message. 
+
+5. Finally, this reccomendation **Card** is returned by the app to the **CDS Hooks Sandbox**, where it is read and displayed to the user.
+ 
 ## Exercise 4 - Modify BMI Calculator Request to use Patient-specific data.
 Right now, the recommendations sent back to the **Sandbox** never change, because we're using static data
 to send to the **BMI Calculator API**. See [this line](https://github.com/uwbhi/phi533-cdshook/blob/d7da4e9e40a52d476e1111bea1e82227c7c1ae85/cds-hook.js#L104). 
@@ -125,7 +156,8 @@ Let's fix this, and send information about the patient that we're actually treat
 
 To save you the time of searching through API documentations and returned data objects, we pulled out all the information you'll need to connect the dots in the sample code. The useful variables are defined in these lines:
 
-```
+*/cds-hook.js*
+```node
   //...
   const hook = req.body.hook; // Type of hook
   const fhirServer = req.body.fhirServer; // URL for FHIR Server endpoint
@@ -147,32 +179,32 @@ We're going to use these variables to make the calls for Patient data and BMI re
 ### Get Patient Age, Sex, Weight, and Height
 Our patient id is stored in the variable `patient`, and the FHIR server endpoing where this patient's information exists is stored in `fhirServer`. We want the requests for patient age, gender, weight, and height to use these variables.
 
-1.  Change the following lines:
-    ```
+1.  Change the following lines in */cds-hook.js*:
+    ```node
       const patientReq = await getAsync(buildPatientURL('SMART-1551992'));
       const weightReq = await getAsync(buildObsURL('SMART-1551992', 'weight'));
       const heightReq = await getAsync(buildObsURL('SMART-1551992', 'height'));
     ```
     to:
-    ```
+    ```node
       const patientReq = await getAsync(buildPatientURL(patient, fhirServer));
       const weightReq = await getAsync(buildObsURL(patient, 'weight', fhirServer));
       const heightReq = await getAsync(buildObsURL(patient, 'height', fhirServer));
     ```
 
-2.  Change the helper functions to accept a `fhir_server` parameter. These lines:
-    ```
+2.  Change the helper functions to accept a `fhir_server` parameter. These lines in */cds-hook.js*:
+    ```node
       const buildObsURL = (patientId, text) => `${FHIR_SERVER_PREFIX}/Observation?patient=${patientId}&code:text=${text}&_sort:desc=date&_count=1`;
       const buildPatientURL = (patientId) => `${FHIR_SERVER_PREFIX}/Patient/${patientId}`;
     ```
     should be replaced with these lines: 
-    ```
+    ```node
       const buildObsURL = (patientId, text, fhir_server) => `${fhir_server}/Observation?patient=${patientId}&code:text=${text}&_sort:desc=date&_count=1`;
       const buildPatientURL = (patientId, fhir_server) => `${fhir_server}/Patient/${patientId}`;
     ```
-3.  We want to send the **BMI Tool** the correct units, so we need to change our `weight` and `height` variables a bit. 
-    Change:
-    ```
+3.  We want to send the **BMI Tool** the correct units. Currently, we're ignoring the unit information that's sent back from the **FHIR Endpoint**. To pass this info on to the **BMI Calculator*, we need to change the `weight` and `height` variable definition up a bit. 
+    Change the following lines in */cds-hook.js*:
+    ```node
       const weight = weightReq.entry[0].resource.valueQuantity.value;
       const height = heightReq.entry[0].resource.valueQuantity.value;
 
@@ -182,7 +214,7 @@ Our patient id is stored in the variable `patient`, and the FHIR server endpoing
       console.log('Height: ', height);      
     ```
     To:
-    ```
+    ```node
       const weight = weightReq.entry[0].resource.valueQuantity;
       const height = heightReq.entry[0].resource.valueQuantity;
 
@@ -193,7 +225,7 @@ Our patient id is stored in the variable `patient`, and the FHIR server endpoing
     ```
 ### Update the data sent to the BMI Calculator
 We're creating the information that we send to the **BMI Calculator API** with the following code:
-```
+```node
   const bmiData = await bmiPostAsync({
     age: 24,
     sex: 'f',
@@ -209,17 +241,17 @@ We're creating the information that we send to the **BMI Calculator API** with t
 ```
 As you can see, this code has many hard-coded values. We need to replace them with the variables we just created.
 
-Replace these lines with the following code: 
-```
+Replace these lines with the following code in the */cds-hook.js* file: 
+```node
   const bmiData = await bmiPostAsync({
     age: age,
     sex: (gender == 'female' ? 'f' : 'm'),
     weight: {
-      value: weight.value,
+      value: Math.round(weight.value),
       unit: weight.unit
     },
     height: {
-      value: height.value,
+      value: Math.round(height.value),
       unit: height.unit
     }
   });
@@ -232,35 +264,35 @@ Replace these lines with the following code:
 
 3. Switch patients to *Lisa P. Coleman* and make sure the card you recieve has patient-specific information that's different from *Daniel's*.
 
-## Exercise 5 - Return Cards only for Hypertensive disorder
-Right now, our **CDS Service** returns cards for all incoming requests. However, we're making a CDS Hook that should only apply to individuals with certain metabolic-related diagnoses and related treatments. We're going to add a bit of logic that will allow our **Service** to only return **Cards** to those patients with *Hypertensive disorder*. 
+## Exercise 5 - Return Cards only for Hypertensive disorder or Essential hypertension
+Right now, our **CDS Service** returns cards for all incoming requests. However, we're making a CDS Hook that should only apply to individuals with certain metabolic-related diagnoses and related treatments. We're going to add a bit of logic that will allow our **Service** to only return **Cards** to those patients with *Hypertensive disorder* or *Essential hypertension*. 
 
 The specs (https://cds-hooks.org/specification/1.0/) mention that when no decision support is available, the **CDS Service** should return and empty array of cards. So let's make that happen!
 
-1. In the **Sandbox**, check the `Request` section of the `phi533-prescribe` service.
+1. In the right side of the **Sandbox** screen labeled **CDS Service Exchange**, select your `phi533-prescribe` service from the `Select a Service` dropdown. Then, click on the `Request` section to see what data is being sent to our application by the **Sandbox**.
 
-2. Look for the `reasonableCodeableConcept` key and note the `text` field. It should be the same as the option you chose in the `Treating` dropdown. We're going to only send back a card for requests where this `text` field is equal to `Hypertensive disorder`
+2. Look for the `reasonableCodeableConcept` key and note the `text` field. It should be the same as the option you chose in the `Treating` dropdown. We're going to only send back a card for requests where this `text` field is equal to `Hypertensive disorder` or `Essential hypertension`
 
-3. Find this line in your code: `const bmiInfo = publicHealthResponse(bmiData);`
+3. Find this line in the */cds-hook.js* file: `const bmiInfo = publicHealthResponse(bmiData);`
 
 4.  Replace it with the following `if/else` statement: 
-    ```
+    ```node
       var cardArray = {};
-      if (reason == "Hypertensive disorder") {
+      if (reason == "Hypertensive disorder" || reason == "Essential hypertension") {
         cardArray = publicHealthResponse(bmiData);
       } else {
         cardArray = { "cards": [] }
       }
     ```
 
-5.  Update these lines:
-    ```
+5.  Update these lines in */cds-hook.js*:
+    ```node
       console.log("Responding with: \n" + JSON.stringify(bmiInfo, null, ' '));
       
       res.send(bmiInfo);
     ```
     with:
-    ```
+    ```node
       console.log("Responding with: \n" + JSON.stringify(cardArray, null, ' '));
       res.send(cardArray);
     ```
@@ -277,9 +309,11 @@ SMART apps have a launch URL that an EHR can hit, and which is able to launch th
 
 ### Use CDS Hooks API documentation to figure out how to format your card
 1. Visit http://cds-hooks.org/specification/1.0/#card-attributes 
-2. Search the docs for information about how to add a `links` card attribute to a card.
-3. Add the following card to your `cards` array (found in the `publicHealthResponse` function) that gets returned in the response:
-    ```
+
+2. Search the docs for information about the `links` attribute attribute. This attribute can be used to return cards that can launch specific SMART on FHIR apps straight from the EHR. Search for `Example response` on the page to see an example - very self-explanatory. 
+
+3.  Add the following card - modeled on the example we just saw - to your `cards` array. 
+    ```json
       {
           "summary": "Obesity Companion",
           "indicator": "info",
@@ -296,4 +330,23 @@ SMART apps have a launch URL that an EHR can hit, and which is able to launch th
           ]
         }
     ```
-4. Test out your card on the **CDS Hooks Sandbox**!
+
+    This array can be found in the the `publicHealthResponse` function in the *cds-hook.js* file. It should look like this: 
+
+    ```node
+      var cards = { "cards": [
+          {
+            "summary": "👨🏻‍⚕️ BMI Information and Recommendations",
+            "detail": bmiMessage,
+            "source": {
+              "label": "WA DOH"
+            },
+            "indicator": "info",
+            "suggestions": []
+          }, 
+          // Put 2nd Card Here!
+        ]
+      }
+    ```
+
+4. Test out your card on the **CDS Hooks Sandbox** by again running through the **Scenario**

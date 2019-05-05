@@ -27,9 +27,9 @@ const publicHealthResponse = (recoms) => {
   if(recoms.bmi === undefined)
     return {"cards": []};
   
-  var bmiMessage = "Your BMI is " + recoms.bmi.value + ". You are " + recoms.bmi.status + ".";
-  bmiMessage = bmiMessage + "<br>You have a " + recoms.bmi.risk;
-  bmiMessage = bmiMessage + "<br>Your ideal weight is: " + recoms.ideal_weight;
+  var bmiMessage = "The patient's BMI is " + recoms.bmi.value + ". The patient is " + recoms.bmi.status + ".";
+  bmiMessage = bmiMessage + "<br>The patient has a " + recoms.bmi.risk;
+  bmiMessage = bmiMessage + "<br>The patient's ideal weight is: " + recoms.ideal_weight;
 
   var cards = {
     "cards": [

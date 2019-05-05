@@ -40,7 +40,7 @@ In this specific scenario, patient **Lisa P. Coleman** is visiting her physician
 4. Click the `Save` button
 5. Click on `Rx View` on the top menu
 6. Select `Hypertensive disorder` from `Treating:` dropdown
-7. Type in `Lopressor` into `Medication` box, and select `Lopressor` => `Metoprolol Tartrate 50 MG Oral Tablet [Lopressor]`. You should see a **CMS Price Check** card returned by one of the demo CDS services. 
+7. Type in `Lopressor` into `Medication` box, and select `Lopressor` => `Metoprolol Tartrate 50 MG [Lopressor]` => `Metoprolol Tartrate 50 MG Oral Tablet [Lopressor]`. You should see a **CMS Price Check** card returned by one of the demo CDS services. 
 8. This service suggests generic drugs to replace Brand-name options by returning a **suggestion card**. Check out the **Response** section to see how this card is formatted. Test out what clicking the `change to generic` button does. 
 8. Since we'll be making and testing our own service, we'll want to turn this one off for now to simplify everything. Go to `CDS Services` > `Configure CDS Services` in the top menu, find the entry for `cms-price-check`, and click the yellow `Enabled?` button to disable the service. 
 9. Make sure the card doesn't show up anymore!

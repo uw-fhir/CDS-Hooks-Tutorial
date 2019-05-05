@@ -53,7 +53,7 @@ We want Lisa and her physician to receive two **Cards** after Lisa is prescribed
 1. An **informational card** giving Lisa some feedback on her BMI
 2. An **app card** that allows Lisa to access a companion SMART on FHIR app to your obesity study. We're obviously not going to build out this app, but we can imagine that it could provide informational services and advice about achieving and keeping a healthy weight, and perhaps be able to consent willing participants to take part in obesity-related studies. For example, information automatically received through FHIR could be used in such a study to pair participants with similar demographics and health metrics who are undergoing different treatments and compare their progression. 
 
-So, how do we get all of this up and running?? 
+So, how do we get all of this up and running?
 
 To save you lots of setup, we created a skeleton CDS Service application for you that has all of individual pieces up and running. You can find it at https://github.com/uwbhi/phi533-cdshook. You'll download the code on your computer and make sure it's running. Then, we will walk through modifying this CDS service and connecting the different pieces to return the two **Cards** mentioned above. 
 
@@ -108,7 +108,7 @@ Now that we have a **CDS Service** that's available on the web, we need to tell 
 
 4. Click the `Save` button. After a small pause, you should get the following message: `Success: Configured CDS Service(s) found at the discovery endpoint.` 
 
-5. Go through **Exercise 1** again. Make sure that instead of the `Price Check` card, you're recieving a card titled `BMI Information and Recommendations`. 
+5. Go through **Exercise 1** again. Make sure that instead of the `Price Check` card, you're receiving a card titled `BMI Information and Recommendations`. 
 
 And Voila! The **CDS Hooks Sandbox** is communicating with your **CDS Service** and getting a nice **Card**!
 
@@ -135,7 +135,7 @@ All of the CDS Hooks logic lives in the code section preceded by this aptly-name
 
 This is a quick overview of what's happening:
 
-1. The app recieves a request from the **Sandbox** that has some data. You can see what data the sandbox sends by unfurling the `Request` tab on the `CDS Service Exchange` section of the **Sandbox**.
+1. The app receives a request from the **Sandbox** that has some data. You can see what data the sandbox sends by unfurling the `Request` tab on the `CDS Service Exchange` section of the **Sandbox**.
 
 2. The app queries a hardcoded **FHIR Endpoint** whose url is stored in the `FHIR_SERVER_PREFIX` variable three times to get gender, age, height, and weight data on a patient with the hardcoded id `SMART-1551992`. It then saves the relevant info in some variables, outputs the variables to the console, and for now, promptly disregards
 them. 
@@ -258,11 +258,11 @@ Replace these lines with the following code in the */cds-hook.js* file:
 ```
 
 ### Test Your Handiwork!
-1. Reload the Sandbox by going to https://sandbox.cds-hooks.org/. Make sure your CDS Service is still added.
+1. Trigger a `medication-prescibe` event by selecting a different medication (or re-selecting the same one) on https://sandbox.cds-hooks.org/.
 
-2. You should be in *Daniel X. Adam's* chart. Go to the `Rx View`, and again run through our scenario from **Exercise 1**. Note the information returned by the card.
+2. Open *Daniel X. Adams*'s chart (`SMART-1288992`). Go to the `Rx View`, and again run through our scenario from **Exercise 1**. Note the information returned by the card.
 
-3. Switch patients to *Lisa P. Coleman* and make sure the card you recieve has patient-specific information that's different from *Daniel's*.
+3. Switch patients to *Lisa P. Coleman* (`SMART-1551992`) and make sure the card you receive has patient-specific information that's different from *Daniel's*.
 
 ## Exercise 5 - Return Cards only for Hypertensive disorder or Essential hypertension
 Right now, our **CDS Service** returns cards for all incoming requests. However, we're making a CDS Hook that should only apply to individuals with certain metabolic-related diagnoses and related treatments. We're going to add a bit of logic that will allow our **Service** to only return **Cards** to those patients with *Hypertensive disorder* or *Essential hypertension*. 

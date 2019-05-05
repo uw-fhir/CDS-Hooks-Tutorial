@@ -36,7 +36,7 @@ In this specific scenario, patient **Lisa P. Coleman** is visiting her physician
 ## Exercise 1 - Acting out the scenario in the CDS Sandbox
 1. Go to https://sandbox.cds-hooks.org
 2. Click on `Change Patient` on the top menu
-3. Select `Lisa P. Coleman`
+3. Select `Lisa P. Coleman` (`SMART-1551992`)
 4. Click the `Save` button
 5. Click on `Rx View` on the top menu
 6. Select `Hypertensive disorder` from `Treating:` dropdown

@@ -28,8 +28,8 @@ const publicHealthResponse = (recoms) => {
     return {"cards": []};
   
   var bmiMessage = "Your BMI is " + recoms.bmi.value + ". You are " + recoms.bmi.status + ".";
-  bmiMessage = bmiMessage + "\nYou have a " + recoms.bmi.risk;
-  bmiMessage = bmiMessage + "\nYour ideal weight is: " + recoms.ideal_weight;
+  bmiMessage = bmiMessage + "<br>You have a " + recoms.bmi.risk;
+  bmiMessage = bmiMessage + "<br>Your ideal weight is: " + recoms.ideal_weight;
 
   var cards = {
     "cards": [
@@ -49,7 +49,7 @@ const publicHealthResponse = (recoms) => {
 };
 
 const FHIR_SERVER_PREFIX = 'https://api.hspconsortium.org/cdshooksdstu2/open';
-const BMI_SERVER_PREFIX = 'https://bmi.p.mashape.com/';
+const BMI_SERVER_PREFIX = 'https://bmi.p.rapidapi.com/';
 
 const buildObsURL = (patientId, text) => `${FHIR_SERVER_PREFIX}/Observation?patient=${patientId}&code:text=${text}&_sort:desc=date&_count=1`;
 const buildPatientURL = (patientId) => `${FHIR_SERVER_PREFIX}/Patient/${patientId}`;
@@ -62,7 +62,8 @@ const bmiPostAsync = async (payload) => {
       body: JSON.stringify(payload),
       headers: {
         'Content-Type': 'application/json',
-        'X-Mashape-Key': 'wwINWStb1qmshrr5MLefJD0RHglLp1IH4ITjsn0zitOozBqxnk',
+        'X-RapidAPI-Host': 'bmi.p.rapidapi.com',
+        'X-RapidAPI-Key': '2da80fad1cmsh95e44479f45f557p1d5c9bjsn5dbb9a6d483b',
         'Accept': 'application/json'
       }
     })).json();
@@ -90,7 +91,7 @@ app.post('/cds-services/phi533-prescribe', asyncHandler(async (req, res, next) =
   const fhirServer = req.body.fhirServer; // URL for FHIR Server endpoint
   const patient = req.body.patient; // Patient Identifier
   // Chosen Problem to Treat
-  const med = req.body.context.medications[0];
+  const med = req.body.context.medications.entry[0].resource;
   const reason = (med.reasonCodeableConcept === undefined ? "" : med.reasonCodeableConcept.text); 
 
   console.log("Useful parameters:");

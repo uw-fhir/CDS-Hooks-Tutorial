@@ -80,16 +80,7 @@ Run the application:
 npm start
 ```
 
-In a separate terminal window, expose your new CDS Service to the Web:
-
-```
-ssh -R 80:localhost:3003 serveo.net
-```
-
-Make sure to note and copy the forwarding server name!
-It should look something like: `https://XXXXX.serveo.net`.
-
-Now go to `https://XXXXX.serveo.net`. You should get the following message:
+Now go to `https://localhost:3003`. You should get the following message:
 
 ```
 PHI 533 CDS Hook Running!
@@ -100,11 +91,11 @@ Nice! Your **Service** is up and running!
 ## Exercise 3 - Add your CDS Service to the Sandbox
 
 Now that we have a **CDS Service** that's available on the web, we need to tell the **Sandbox** about it. 
-1. Your **CDS Service** endpoint provides a list of CDS Services when accessed with the following path: `https://XXXXX.serveo.net/cds-services`. Go to this url in your browser to see what it returns. 
+1. Your **CDS Service** endpoint provides a list of CDS Services when accessed with the following path: `https://localhost:3003/cds-services`. Go to this url in your browser to see what it returns. 
 
 2. Click on the `CDS Services` button in the top menu, and choose `Add CDS Service` from the dropdown
 
-3. Fill out the `Discover Endpoint URL:` textbox with your **Service** endpoint: `https://XXXXX.serveo.net/cds-services`. 
+3. Fill out the `Discover Endpoint URL:` textbox with your **Service** endpoint: `https://localhost:3003/cds-services`. 
 
 4. Click the `Save` button. After a small pause, you should get the following message: `Success: Configured CDS Service(s) found at the discovery endpoint.` 
 
@@ -118,9 +109,7 @@ If you open the `phi533-cdshook` that you either created with `git checkout` or 
 
 So, what does our simple, ~130-line CDS Service actually do? 
 
-The application itself is an [Express JS Web Application](https://expressjs.com/). We don't really need to go into all the setup details - all you need to know is that when we run `npm start`, we make this app run on our local computer and listen to specific incoming web requests (for those interested, it's running on port `3003`).  
-
-When we run the following line in our terminal - `ssh -R 80:localhost:3003 serveo.net` - we expose our local application to the web under the serveo.net domain name; this way, the **CDS Sandbox** has an actual web url to communicate with. 
+The application itself is an [Express JS Web Application](https://expressjs.com/). We don't really need to go into all the setup details - all you need to know is that when we run `npm start`, we make this app run on our local computer and listen to specific incoming web requests (for those interested, it's running on port `3003`).
 
 Our app actually only responds to three specific url patterns. Notice how the `cds-hooks.js` file has `app.get('/'...`, `app.get('/cds-services'...`, and `app.post('/cds-services/phi533-prescribe'...` sections. Our app will respond to two `GET` requests and one `POST` request on these three paths. 
 

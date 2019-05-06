@@ -35,26 +35,18 @@ Run the application:
 npm start
 ```
 
-In a separate terminal window, expose the endpoint:
-
-```
-ssh -R 80:localhost:3003 serveo.net
-```
-
-Note the forwarding server name (something like `https://XXXXX.serveo.net`).
-
 ## Testing
 
 ### Basic Check
 
-Navigate to `https://XXXXX.serveo.net/` and make sure you see a message that the service is running.
+Navigate to `https://localhost:3003/` and make sure you see a message that the service is running.
 
 ### Configure Sandbox
 
 Navigate to the [CDS Hooks sandbox](http://sandbox.cds-hooks.org/). Click the **CDS Services** link at the
 top right and choose **ADD CDS Service**.
 
-In the input box, enter `https://XXXXX.serveo.net/cds-services`, using the SSH tunnel output from above, but appending `/cds-services` to the URL.
+In the input box, enter `https://localhost:3003/cds-services`, using the SSH tunnel output from above, but appending `/cds-services` to the URL.
 
 Then test the config:
 

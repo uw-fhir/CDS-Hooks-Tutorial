@@ -39,14 +39,14 @@ npm start
 
 ### Basic Check
 
-Navigate to `https://localhost:3003/` and make sure you see a message that the service is running.
+Navigate to `http://localhost:3003/` and make sure you see a message that the service is running.
 
 ### Configure Sandbox
 
 Navigate to the [CDS Hooks sandbox](http://sandbox.cds-hooks.org/). Click the **CDS Services** link at the
 top right and choose **ADD CDS Service**.
 
-In the input box, enter `https://localhost:3003/cds-services`, using the SSH tunnel output from above, but appending `/cds-services` to the URL.
+In the input box, enter `http://localhost:3003/cds-services`, using the SSH tunnel output from above, but appending `/cds-services` to the URL.
 
 Then test the config:
 
